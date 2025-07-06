@@ -65,17 +65,17 @@ const AddQuestion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg">
             <Plus className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
             Add New Question
           </h1>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-300 text-lg">
             Create a new coding challenge entry
           </p>
         </div>
@@ -83,7 +83,7 @@ const AddQuestion = () => {
         {/* Form Card */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8 sm:p-10"
+          className="bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-700/50 p-8 sm:p-10"
         >
           <div className="space-y-8">
             {/* Status Toggles */}
@@ -101,15 +101,15 @@ const AddQuestion = () => {
                   htmlFor="questionStatus"
                   className={`flex items-center space-x-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.questionStatus
-                      ? "border-green-400 bg-green-50 text-green-700"
-                      : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
+                      ? "border-green-400 bg-green-900/30 text-green-300"
+                      : "border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500"
                   }`}
                 >
                   <CheckCircle
                     className={`w-5 h-5 ${
                       formData.questionStatus
-                        ? "text-green-600"
-                        : "text-gray-400"
+                        ? "text-green-400"
+                        : "text-gray-500"
                     }`}
                   />
                   <span className="font-medium">Completed</span>
@@ -129,15 +129,15 @@ const AddQuestion = () => {
                   htmlFor="questionRevision"
                   className={`flex items-center space-x-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.questionRevision
-                      ? "border-blue-400 bg-blue-50 text-blue-700"
-                      : "border-gray-200 bg-gray-50 text-gray-600 hover:border-gray-300"
+                      ? "border-blue-400 bg-blue-900/30 text-blue-300"
+                      : "border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500"
                   }`}
                 >
                   <RotateCcw
                     className={`w-5 h-5 ${
                       formData.questionRevision
-                        ? "text-blue-600"
-                        : "text-gray-400"
+                        ? "text-blue-400"
+                        : "text-gray-500"
                     }`}
                   />
                   <span className="font-medium">Needs Revision</span>
