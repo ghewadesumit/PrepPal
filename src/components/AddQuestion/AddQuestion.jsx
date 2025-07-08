@@ -6,14 +6,25 @@ import {
   Building,
   CheckCircle,
   RotateCcw,
+  X,
 } from "lucide-react";
 
-const AddQuestion = () => {
+import { cloneDeep } from "lodash";
+import { dsaQuestionsKey, frontEndQuestionsKey } from "../../constants/mock";
+
+const AddQuestion = ({
+  selectedNavItem,
+  setSectionData,
+  sectionData,
+  questionSectionsData,
+  setIsOpen,
+}) => {
   const [formData, setFormData] = useState({
     questionStatus: false,
     questionRevision: false,
     questionName: "",
     questionLink: "",
+    questionSection: questionSectionsData?.[0]?.id || "", // Default to first section
     questionDifficulty: "easy",
     questionRating: "3",
     questionCompanies: "",
@@ -29,6 +40,39 @@ const AddQuestion = () => {
     }));
   };
 
+  const storeNewQuestion = (newQuestion) => {
+    console.log("Debug");
+    const updatedSectionData = { ...sectionData };
+    const sectionKey = newQuestion.questionSection;
+
+    if (!updatedSectionData[sectionKey]) {
+      updatedSectionData[sectionKey] = {
+        sectionId: sectionKey,
+        sectionName: questionSectionsData.find(
+          (item) => item.value === sectionKey
+        )?.name,
+        questions: [],
+      };
+    }
+
+    updatedSectionData[sectionKey].questions.push({
+      id: Date.now().toString(), // Simple unique ID
+      name: newQuestion.questionName,
+      link: newQuestion.questionLink,
+      difficulty: newQuestion.questionDifficulty,
+      rating: parseInt(newQuestion.questionRating, 10),
+      completed: newQuestion.questionStatus,
+      revision: newQuestion.questionRevision,
+      companies: newQuestion.questionCompanies.split(",").map((c) => c.trim()),
+    });
+
+    const localKey =
+      selectedNavItem === "backend" ? dsaQuestionsKey : frontEndQuestionsKey;
+    localStorage.setItem(localKey, JSON.stringify(updatedSectionData));
+
+    setSectionData(cloneDeep(updatedSectionData));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -38,6 +82,8 @@ const AddQuestion = () => {
 
     console.log("Form submitted:", formData);
     setIsSubmitting(false);
+
+    storeNewQuestion(formData);
 
     // Reset form
     setFormData({
@@ -49,6 +95,8 @@ const AddQuestion = () => {
       questionRating: "3",
       questionCompanies: "",
     });
+
+    setIsOpen(false);
   };
 
   const getDifficultyColor = (difficulty) => {
@@ -64,28 +112,46 @@ const AddQuestion = () => {
     }
   };
 
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      setIsOpen(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full mb-4 shadow-lg">
-            <Plus className="w-8 h-8 text-white" />
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"
+      onClick={handleBackdropClick}
+    >
+      <div className="bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-800">
+        {/* Modal Header */}
+        <div className="sticky top-0 bg-gray-900 rounded-t-3xl border-b border-gray-800 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full">
+                <Plus className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">
+                  Add New Question
+                </h2>
+                <p className="text-sm text-gray-400">
+                  Create a new coding challenge entry
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsOpen(false)}
+              className="p-2 hover:bg-gray-800 rounded-full transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-400" />
+            </button>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">
-            Add New Question
-          </h1>
-          <p className="text-gray-300 text-lg">
-            Create a new coding challenge entry
-          </p>
         </div>
 
-        {/* Form Card */}
-        <form
-          onSubmit={handleSubmit}
-          className="bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-xl border border-gray-700/50 p-8 sm:p-10"
-        >
-          <div className="space-y-8">
+        {/* Modal Body */}
+        <div className="p-6">
+          <div className="space-y-6">
             {/* Status Toggles */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="relative">
@@ -99,20 +165,20 @@ const AddQuestion = () => {
                 />
                 <label
                   htmlFor="questionStatus"
-                  className={`flex items-center space-x-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center space-x-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.questionStatus
-                      ? "border-green-400 bg-green-900/30 text-green-300"
-                      : "border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500"
+                      ? "border-green-500 bg-green-900/30 text-green-400"
+                      : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
                   }`}
                 >
                   <CheckCircle
-                    className={`w-5 h-5 ${
+                    className={`w-4 h-4 ${
                       formData.questionStatus
-                        ? "text-green-400"
+                        ? "text-green-500"
                         : "text-gray-500"
                     }`}
                   />
-                  <span className="font-medium">Completed</span>
+                  <span className="font-medium text-sm">Completed</span>
                 </label>
               </div>
 
@@ -127,29 +193,56 @@ const AddQuestion = () => {
                 />
                 <label
                   htmlFor="questionRevision"
-                  className={`flex items-center space-x-3 p-4 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                  className={`flex items-center space-x-3 p-3 rounded-xl border-2 cursor-pointer transition-all duration-200 ${
                     formData.questionRevision
-                      ? "border-blue-400 bg-blue-900/30 text-blue-300"
-                      : "border-gray-600 bg-gray-700/50 text-gray-300 hover:border-gray-500"
+                      ? "border-blue-500 bg-blue-900/30 text-blue-400"
+                      : "border-gray-700 bg-gray-800 text-gray-400 hover:border-gray-600"
                   }`}
                 >
                   <RotateCcw
-                    className={`w-5 h-5 ${
+                    className={`w-4 h-4 ${
                       formData.questionRevision
-                        ? "text-blue-400"
+                        ? "text-blue-500"
                         : "text-gray-500"
                     }`}
                   />
-                  <span className="font-medium">Needs Revision</span>
+                  <span className="font-medium text-sm">Needs Revision</span>
                 </label>
               </div>
+            </div>
+
+            {/* Difficulty */}
+            <div className="space-y-2">
+              <label
+                htmlFor="questionSection"
+                className="block text-sm font-semibold text-gray-300"
+              >
+                Question Section
+                <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="questionSection"
+                name="questionSection"
+                value={formData.questionSection}
+                onChange={handleInputChange}
+                required
+                className={`w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${getDifficultyColor(
+                  formData.questionDifficulty
+                )} bg-gray-800`}
+              >
+                {questionSectionsData?.map((item) => (
+                  <option key={item.id} value={item.value}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Question Name */}
             <div className="space-y-2">
               <label
                 htmlFor="questionName"
-                className="block text-sm font-semibold text-gray-700"
+                className="block text-sm font-semibold text-gray-300"
               >
                 Question Name
               </label>
@@ -161,7 +254,7 @@ const AddQuestion = () => {
                 onChange={handleInputChange}
                 required
                 placeholder="Enter the question title..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800"
               />
             </div>
 
@@ -169,7 +262,7 @@ const AddQuestion = () => {
             <div className="space-y-2">
               <label
                 htmlFor="questionLink"
-                className="block text-sm font-semibold text-gray-700 flex items-center space-x-2"
+                className="block text-sm font-semibold text-gray-300 flex items-center space-x-2"
               >
                 <Link className="w-4 h-4" />
                 <span>Question Link</span>
@@ -182,17 +275,17 @@ const AddQuestion = () => {
                 onChange={handleInputChange}
                 required
                 placeholder="https://leetcode.com/problems/..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800"
               />
             </div>
 
             {/* Difficulty and Rating Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Difficulty */}
               <div className="space-y-2">
                 <label
                   htmlFor="questionDifficulty"
-                  className="block text-sm font-semibold text-gray-700"
+                  className="block text-sm font-semibold text-gray-300"
                 >
                   Difficulty Level
                 </label>
@@ -202,9 +295,9 @@ const AddQuestion = () => {
                   value={formData.questionDifficulty}
                   onChange={handleInputChange}
                   required
-                  className={`w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${getDifficultyColor(
+                  className={`w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${getDifficultyColor(
                     formData.questionDifficulty
-                  )}`}
+                  )} bg-gray-800`}
                 >
                   <option value="easy">Easy</option>
                   <option value="medium">Medium</option>
@@ -216,7 +309,7 @@ const AddQuestion = () => {
               <div className="space-y-2">
                 <label
                   htmlFor="questionRating"
-                  className="block text-sm font-semibold text-gray-700 flex items-center space-x-2"
+                  className="block text-sm font-semibold text-gray-300 flex items-center space-x-2"
                 >
                   <Star className="w-4 h-4" />
                   <span>Rating</span>
@@ -227,7 +320,7 @@ const AddQuestion = () => {
                   value={formData.questionRating}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white bg-gray-800"
                 >
                   <option value="1">⭐ 1 Star</option>
                   <option value="2">⭐⭐ 2 Stars</option>
@@ -242,7 +335,7 @@ const AddQuestion = () => {
             <div className="space-y-2">
               <label
                 htmlFor="questionCompanies"
-                className="block text-sm font-semibold text-gray-700 flex items-center space-x-2"
+                className="block text-sm font-semibold text-gray-300 flex items-center space-x-2"
               >
                 <Building className="w-4 h-4" />
                 <span>Companies</span>
@@ -254,43 +347,44 @@ const AddQuestion = () => {
                 value={formData.questionCompanies}
                 onChange={handleInputChange}
                 placeholder="Google, Microsoft, Amazon..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800"
               />
             </div>
+          </div>
+        </div>
 
-            {/* Submit Button */}
+        {/* Modal Footer */}
+        <div className="sticky bottom-0 bg-gray-900 rounded-b-3xl border-t border-gray-800 p-6">
+          <div className="flex space-x-3">
             <button
-              type="submit"
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="flex-1 py-3 px-6 border border-gray-700 rounded-xl font-semibold text-gray-300 hover:bg-gray-800 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
               disabled={isSubmitting}
-              className={`w-full py-4 px-6 rounded-2xl font-semibold text-white text-lg transition-all duration-200 transform ${
+              className={`flex-1 py-3 px-6 rounded-xl font-semibold text-white transition-all duration-200 ${
                 isSubmitting
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-gray-600 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg"
               }`}
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Adding Question...</span>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <span>Adding...</span>
                 </div>
               ) : (
-                <button
-                  type="submit"
-                  className="flex items-center justify-center space-x-2"
-                >
-                  <Plus className="w-5 h-5" />
+                <div className="flex items-center justify-center space-x-2">
+                  <Plus className="w-4 h-4" />
                   <span>Add Question</span>
-                </button>
+                </div>
               )}
             </button>
           </div>
-        </form>
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-gray-500">
-          <p className="text-sm">
-            Keep track of your coding interview preparation
-          </p>
         </div>
       </div>
     </div>

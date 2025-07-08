@@ -1,7 +1,71 @@
-export const questions = [
+export const sections = [
   {
-    sectionId: "array",
-    sectionName: "Array",
+    id: "arrayHashTable",
+    name: "Array / Hash Table",
+  },
+  {
+    id: "twoPointers",
+    name: "Two Pointers",
+  },
+  {
+    id: "stack",
+    name: "Stack",
+  },
+  {
+    id: "queue",
+    name: "Queue",
+  },
+  {
+    id: "binarySearch",
+    name: "Binary Search",
+  },
+  {
+    id: "string",
+    name: "String",
+  },
+  {
+    id: "heap",
+    name: "Heap",
+  },
+  {
+    id: "linkedList",
+    name: "Linked List",
+  },
+  {
+    id: "tree",
+    name: "Tree",
+  },
+  { id: "backtracking", name: "Backtracking" },
+  {
+    id: "graph",
+    name: "Graph",
+  },
+  {
+    id: "dynamicProgramming",
+    name: "Dynamic Programming",
+  },
+  {
+    id: "bitManipulation",
+    name: "Bit Manipulation",
+  },
+  {
+    id: "math",
+    name: "Math",
+  },
+  {
+    id: "design",
+    name: "Design",
+  },
+  {
+    id: "greedy",
+    name: "Greedy",
+  },
+];
+
+export const questions = {
+  arrayHashTable: {
+    sectionId: "arrayHashTable",
+    sectionName: "Array / Hash Table",
     questions: [
       {
         id: "twoSum",
@@ -25,7 +89,7 @@ export const questions = [
       },
     ],
   },
-  {
+  twoPointers: {
     sectionId: "twoPointers",
     sectionName: "Two Pointers",
     questions: [
@@ -41,4 +105,4 @@ export const questions = [
       },
     ],
   },
-];
+};

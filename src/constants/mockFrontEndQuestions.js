@@ -1,5 +1,15 @@
-export const questions = [
+export const sections = [
   {
+    id: "userInterface",
+    name: "User Interface",
+  },
+  {
+    id: "javascript",
+    name: "JavaScript Functions",
+  },
+];
+export const questions = {
+  userInterface: {
     sectionId: "userInterface",
     sectionName: "User Interface",
     questions: [
@@ -25,7 +35,7 @@ export const questions = [
       },
     ],
   },
-  {
+  javascript: {
     sectionId: "javascript",
     sectionName: "JavaScript Functions",
     questions: [
@@ -41,4 +51,4 @@ export const questions = [
       },
     ],
   },
-];
+};
