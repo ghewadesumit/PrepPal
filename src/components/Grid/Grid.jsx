@@ -20,7 +20,7 @@ const Grid = ({ rowData }) => {
 
   // Container: Defines the grid's theme & dimensions.
   return (
-    <div style={{ width: "80vw" }}>
+    <div style={{ width: "100%" }}>
       <AgGridReact
         rowData={rowData}
         columnDefs={colInitialData}
