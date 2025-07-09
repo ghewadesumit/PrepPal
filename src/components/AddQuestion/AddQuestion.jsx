@@ -48,9 +48,8 @@ const AddQuestion = ({
     if (!updatedSectionData[sectionKey]) {
       updatedSectionData[sectionKey] = {
         sectionId: sectionKey,
-        sectionName: questionSectionsData.find(
-          (item) => item.value === sectionKey
-        )?.name,
+        sectionName: questionSectionsData.find((item) => item.id === sectionKey)
+          ?.name,
         questions: [],
       };
     }
@@ -231,7 +230,7 @@ const AddQuestion = ({
                 )} bg-gray-800`}
               >
                 {questionSectionsData?.map((item) => (
-                  <option key={item.id} value={item.value}>
+                  <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}
