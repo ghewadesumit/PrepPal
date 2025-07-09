@@ -10,7 +10,11 @@ import {
 } from "lucide-react";
 
 import { cloneDeep } from "lodash";
-import { dsaQuestionsKey, frontEndQuestionsKey } from "../../constants/mock";
+import {
+  companiesKey,
+  dsaQuestionsKey,
+  frontEndQuestionsKey,
+} from "../../constants/mock";
 
 const AddQuestion = ({
   selectedNavItem,
@@ -18,6 +22,8 @@ const AddQuestion = ({
   sectionData,
   questionSectionsData,
   setIsOpen,
+  companies,
+  setCompanies,
 }) => {
   const [formData, setFormData] = useState({
     questionStatus: false,
@@ -62,7 +68,27 @@ const AddQuestion = ({
       rating: parseInt(newQuestion.questionRating, 10),
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
-      companies: newQuestion.questionCompanies.split(",").map((c) => c.trim()),
+      companies: Array.from(
+        new Set(
+          newQuestion.questionCompanies.split(",").map((c) => {
+            const newCompany = c.trim().toLowerCase();
+            if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+              return companies[newCompany].name;
+            } else {
+              // If company doesn't exist, add it to the companies list
+              const newCompanyObj = {
+                id: newCompany,
+                name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+              };
+              const copyCompanies = cloneDeep(companies);
+              copyCompanies[newCompany] = newCompanyObj;
+              localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
+              setCompanies(copyCompanies);
+              return newCompanyObj.name;
+            }
+          })
+        )
+      ),
     });
 
     const localKey =

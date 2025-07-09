@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { ArrowUpDown, Search } from "lucide-react";
+import { ArrowUpDown, Search, Star } from "lucide-react";
 
-const NewGrid = ({ rowData }) => {
+const NewGrid = ({ rowData, companies }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [filter, setFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [companyFilter, setCompanyFilter] = useState("All");
+
+  //   const uniqueCompanies = getUniqueC
+  // ompanies(rowData);
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -23,10 +27,17 @@ const NewGrid = ({ rowData }) => {
           .includes(filter.toLowerCase());
 
         const matchesDifficulty =
-          difficultyFilter === "All" || item.difficulty === difficultyFilter;
-        const matchesStatus =
-          statusFilter === "All" || item.status === statusFilter;
-        return matchesSearch && matchesDifficulty && matchesStatus;
+          difficultyFilter === "All" ||
+          String(item.difficulty).toLowerCase() ===
+            String(difficultyFilter).toLowerCase();
+
+        const matchesCompany =
+          companyFilter === "All" ||
+          (item.companies &&
+            item.companies.some(
+              (company) => company.toLowerCase() === companyFilter.toLowerCase()
+            ));
+        return matchesSearch && matchesDifficulty && matchesCompany;
       })
       .sort((a, b) => {
         if (!sortConfig.key) return 0;
@@ -69,14 +80,16 @@ const NewGrid = ({ rowData }) => {
             <option value="Hard">Hard</option>
           </select>
           <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            value={companyFilter}
+            onChange={(e) => setCompanyFilter(e.target.value)}
             className="bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
           >
-            <option value="All">All Status</option>
-            <option value="Completed">Completed</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Not Started">Not Started</option>
+            <option value="All">All Companies</option>
+            {Object.keys(companies).map((key) => (
+              <option key={companies[key].id} value={companies[key].id}>
+                {companies[key].name}
+              </option>
+            ))}
           </select>
         </div>
       </div>
@@ -84,7 +97,7 @@ const NewGrid = ({ rowData }) => {
       {/* Table Header */}
       <div className="bg-gray-750 border-b border-gray-700">
         <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-300">
-          <div className="col-span-4">
+          <div className="col-span-3">
             <button
               onClick={() => handleSort("title")}
               className="flex items-center hover:text-white transition-colors"
@@ -102,12 +115,12 @@ const NewGrid = ({ rowData }) => {
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-3">
             <button
-              onClick={() => handleSort("status")}
+              onClick={() => handleSort("companies")}
               className="flex items-center hover:text-white transition-colors"
             >
-              Status
+              Companies
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
@@ -116,16 +129,16 @@ const NewGrid = ({ rowData }) => {
               onClick={() => handleSort("topic")}
               className="flex items-center hover:text-white transition-colors"
             >
-              Topic
+              Link
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
           <div className="col-span-2">
             <button
-              onClick={() => handleSort("dateAdded")}
+              onClick={() => handleSort("rating")}
               className="flex items-center hover:text-white transition-colors"
             >
-              Date Added
+              Rating
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
@@ -146,15 +159,15 @@ const NewGrid = ({ rowData }) => {
                 index % 2 === 0 ? "bg-gray-800" : "bg-gray-775"
               }`}
             >
-              <div className="col-span-4 text-white font-medium">
-                {question.title}
+              <div className="col-span-3 text-white font-medium">
+                {question.name}
               </div>
               <div className="col-span-2">
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    question.difficulty === "Easy"
+                    String(question.difficulty).toLowerCase() === "easy"
                       ? "bg-green-900 text-green-300"
-                      : question.difficulty === "Medium"
+                      : question.difficulty === "medium"
                       ? "bg-yellow-900 text-yellow-300"
                       : "bg-red-900 text-red-300"
                   }`}
@@ -162,22 +175,43 @@ const NewGrid = ({ rowData }) => {
                   {question.difficulty}
                 </span>
               </div>
-              <div className="col-span-2">
-                <span
-                  className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    question.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : question.status === "In Progress"
-                      ? "bg-blue-900 text-blue-300"
-                      : "bg-gray-600 text-gray-300"
-                  }`}
-                >
-                  {question.status}
-                </span>
+              <div className="col-span-3 flex flex-wrap gap-1 items-center">
+                {question.companies && question.companies.length > 0 ? (
+                  question.companies.map((company) => (
+                    <span
+                      key={company}
+                      className="bg-gray-700 text-gray-200 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-600"
+                    >
+                      {company}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
               </div>
-              <div className="col-span-2 text-gray-300">{question.topic}</div>
-              <div className="col-span-2 text-gray-400">
-                {question.dateAdded}
+              <div className="col-span-2">
+                <a
+                  href={question.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline hover:text-blue-300 transition-colors break-all"
+                >
+                  {question.link}
+                </a>
+              </div>
+              <div className="col-span-2 flex items-center">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    fill={question.rating >= star ? "#facc15" : "none"}
+                    stroke="#facc15"
+                    className={`w-4 h-4 mr-1 ${
+                      question.rating >= star
+                        ? "text-yellow-400"
+                        : "text-gray-500"
+                    }`}
+                  />
+                ))}
               </div>
             </div>
           ))

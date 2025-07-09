@@ -16,6 +16,7 @@ function App() {
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
   const [questionSections, setQuestionSections] = useState([]);
   const [expandedSections, setExpandedSections] = useState({});
+  const [companies, setCompanies] = useState({});
 
   useEffect(() => {
     const sessionKey =
@@ -23,6 +24,9 @@ function App() {
         ? QuestionMockData.dsaQuestionsKey
         : QuestionMockData.frontEndQuestionsKey;
     const sessionRowData = localStorage.getItem(sessionKey);
+    const localStorageCompaniesData = localStorage.getItem(
+      QuestionMockData.companiesKey
+    );
 
     const sectionData =
       selectedNavItem === "backend"
@@ -39,6 +43,12 @@ function App() {
           ? dsaQuestionMockData.questions
           : frontendQuestionMockData.questions;
       setSectionData(rowInitialData);
+    }
+
+    if (localStorageCompaniesData?.length) {
+      setCompanies(JSON.parse(localStorageCompaniesData));
+    } else {
+      setCompanies(QuestionMockData.companiesData);
     }
 
     // Reset expanded sections when switching tabs
@@ -101,6 +111,8 @@ function App() {
                 setSectionData={setSectionData}
                 questionSectionsData={questionSections}
                 setIsOpen={setIsOpenAddQuestion}
+                companies={companies}
+                setCompanies={setCompanies}
               />
             </div>
           </div>
@@ -150,7 +162,11 @@ function App() {
                 {expandedSections[sectionKey] && (
                   <div className="border-t border-gray-700 p-6">
                     {/* <AgGrid rowData={sectionData[sectionKey].questions} /> */}
-                    <Grid rowData={sectionData[sectionKey].questions} />
+                    {/* <Grid rowData={sectionData[sectionKey].questions} /> */}
+                    <NewGrid
+                      rowData={sectionData[sectionKey].questions}
+                      companies={companies}
+                    />
                   </div>
                 )}
               </div>
