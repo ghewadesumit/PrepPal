@@ -151,7 +151,7 @@ const NewGrid = ({
 
       {/* Table Header */}
       <div className="bg-gray-750 border-b border-gray-700">
-        <div className="grid grid-cols-12 gap-3 p-6 text-sm font-medium text-gray-300">
+        <div className="grid grid-cols-12 gap-6 p-6 text-sm font-medium text-gray-300">
           <div className="col-span-1">
             <button
               onClick={() => handleSort("completed")}
@@ -170,7 +170,7 @@ const NewGrid = ({
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-3">
             <button
               onClick={() => handleSort("title")}
               className="flex items-center hover:text-white transition-colors"
@@ -188,30 +188,22 @@ const NewGrid = ({
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-3">
-            <button
-              onClick={() => handleSort("companies")}
-              className="flex items-center hover:text-white transition-colors"
-            >
-              Companies
-              <ArrowUpDown className="ml-1 w-3 h-3" />
-            </button>
-          </div>
-          <div className="col-span-3">
-            <button
-              onClick={() => handleSort("topic")}
-              className="flex items-center hover:text-white transition-colors"
-            >
-              Link
-              <ArrowUpDown className="ml-1 w-3 h-3" />
-            </button>
-          </div>
+
           <div className="col-span-1">
             <button
               onClick={() => handleSort("rating")}
               className="flex items-center hover:text-white transition-colors"
             >
               Rating
+              <ArrowUpDown className="ml-1 w-3 h-3" />
+            </button>
+          </div>
+          <div className="col-span-4">
+            <button
+              onClick={() => handleSort("companies")}
+              className="flex items-center hover:text-white transition-colors"
+            >
+              Companies
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
@@ -260,8 +252,15 @@ const NewGrid = ({
                   )}
                 </button>
               </div>
-              <div className="col-span-2 text-white font-medium">
-                {question.name}
+              <div className="col-span-3 font-medium">
+                <a
+                  href={question.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                >
+                  {question.name}
+                </a>
               </div>
               <div className="col-span-1">
                 <span
@@ -275,30 +274,6 @@ const NewGrid = ({
                 >
                   {question.difficulty}
                 </span>
-              </div>
-              <div className="col-span-3 flex flex-wrap gap-1 items-center">
-                {question.companies && question.companies.length > 0 ? (
-                  question.companies.map((company) => (
-                    <span
-                      key={company}
-                      className="bg-gray-700 text-gray-200 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-600"
-                    >
-                      {company}
-                    </span>
-                  ))
-                ) : (
-                  <span className="text-gray-400">-</span>
-                )}
-              </div>
-              <div className="col-span-3">
-                <a
-                  href={question.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:underline hover:text-blue-300 transition-colors break-all"
-                >
-                  {question.link}
-                </a>
               </div>
 
               <div className="col-span-1 flex items-center">
@@ -314,6 +289,21 @@ const NewGrid = ({
                     }`}
                   />
                 ))}
+              </div>
+
+              <div className="col-span-4 flex flex-wrap gap-1 items-center">
+                {question.companies && question.companies.length > 0 ? (
+                  question.companies.map((company) => (
+                    <span
+                      key={company}
+                      className="bg-gray-700 text-gray-200 px-2 py-0.5 rounded-full text-xs font-medium border border-gray-600"
+                    >
+                      {company}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
               </div>
             </div>
           ))

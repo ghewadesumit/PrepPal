@@ -137,17 +137,8 @@ const AddQuestion = ({
     }
   };
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setIsOpen(false);
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
       <div className="bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-800">
         {/* Modal Header */}
         <div className="sticky top-0 bg-gray-900 rounded-t-3xl border-b border-gray-800 p-6">
