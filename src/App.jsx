@@ -166,6 +166,10 @@ function App() {
                     <NewGrid
                       rowData={sectionData[sectionKey].questions}
                       companies={companies}
+                      setSectionData={setSectionData}
+                      sectionData={sectionData}
+                      sectionKey={sectionKey}
+                      selectedNavItem={selectedNavItem}
                     />
                   </div>
                 )}

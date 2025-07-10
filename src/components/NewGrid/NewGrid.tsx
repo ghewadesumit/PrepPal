@@ -1,15 +1,22 @@
 import { useState } from "react";
-import { ArrowUpDown, Search, Star } from "lucide-react";
+import { ArrowUpDown, Search, Star, Check, X } from "lucide-react";
 
-const NewGrid = ({ rowData, companies }) => {
+const NewGrid = ({
+  rowData,
+  companies,
+  setSectionData,
+  sectionData,
+  selectedNavItem,
+}) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [filter, setFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [companyFilter, setCompanyFilter] = useState("All");
 
-  //   const uniqueCompanies = getUniqueC
-  // ompanies(rowData);
+  // Local storage keys (you might want to import these from constants)
+  const dsaQuestionsKey = "dsaQuestions";
+  const frontEndQuestionsKey = "frontEndQuestions";
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -17,6 +24,46 @@ const NewGrid = ({ rowData, companies }) => {
       direction = "desc";
     }
     setSortConfig({ key, direction });
+  };
+
+  const toggleStatus = (questionId, statusType) => {
+    if (!setSectionData || !sectionData) return;
+
+    const updatedSectionData = { ...sectionData };
+
+    // Find the section containing this question
+    Object.keys(updatedSectionData).forEach((sectionKey) => {
+      const questionIndex = updatedSectionData[sectionKey].questions.findIndex(
+        (q) => q.id === questionId
+      );
+
+      if (questionIndex !== -1) {
+        // Toggle the status
+        updatedSectionData[sectionKey].questions[questionIndex][statusType] =
+          !updatedSectionData[sectionKey].questions[questionIndex][statusType];
+
+        // Update localStorage
+        const localKey =
+          selectedNavItem === "backend"
+            ? dsaQuestionsKey
+            : frontEndQuestionsKey;
+        localStorage.setItem(localKey, JSON.stringify(updatedSectionData));
+
+        // Update state
+        setSectionData(updatedSectionData);
+      }
+    });
+  };
+
+  const getRowBackgroundClass = (question) => {
+    if (question.completed && question.revision) {
+      return "bg-purple-900/20 border-purple-500/30 hover:bg-purple-900/30";
+    } else if (question.completed) {
+      return "bg-green-900/20 border-green-500/30 hover:bg-green-900/30";
+    } else if (question.revision) {
+      return "bg-yellow-900/20 border-yellow-500/30 hover:bg-yellow-900/30";
+    }
+    return "bg-gray-800 hover:bg-gray-750";
   };
 
   const filteredAndSortedData =
@@ -31,13 +78,21 @@ const NewGrid = ({ rowData, companies }) => {
           String(item.difficulty).toLowerCase() ===
             String(difficultyFilter).toLowerCase();
 
+        const matchesStatus =
+          statusFilter === "All" ||
+          (statusFilter === "Completed" && item.completed) ||
+          (statusFilter === "Revision" && item.revision) ||
+          (statusFilter === "Pending" && !item.completed && !item.revision);
+
         const matchesCompany =
           companyFilter === "All" ||
           (item.companies &&
             item.companies.some(
               (company) => company.toLowerCase() === companyFilter.toLowerCase()
             ));
-        return matchesSearch && matchesDifficulty && matchesCompany;
+        return (
+          matchesSearch && matchesDifficulty && matchesStatus && matchesCompany
+        );
       })
       .sort((a, b) => {
         if (!sortConfig.key) return 0;
@@ -96,8 +151,26 @@ const NewGrid = ({ rowData, companies }) => {
 
       {/* Table Header */}
       <div className="bg-gray-750 border-b border-gray-700">
-        <div className="grid grid-cols-12 gap-4 p-4 text-sm font-medium text-gray-300">
-          <div className="col-span-3">
+        <div className="grid grid-cols-12 gap-3 p-6 text-sm font-medium text-gray-300">
+          <div className="col-span-1">
+            <button
+              onClick={() => handleSort("completed")}
+              className="flex items-center hover:text-white transition-colors"
+            >
+              Completed
+              <ArrowUpDown className="ml-1 w-3 h-3" />
+            </button>
+          </div>
+          <div className="col-span-1">
+            <button
+              onClick={() => handleSort("revision")}
+              className="flex items-center hover:text-white transition-colors"
+            >
+              Revision
+              <ArrowUpDown className="ml-1 w-3 h-3" />
+            </button>
+          </div>
+          <div className="col-span-2">
             <button
               onClick={() => handleSort("title")}
               className="flex items-center hover:text-white transition-colors"
@@ -106,7 +179,7 @@ const NewGrid = ({ rowData, companies }) => {
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <button
               onClick={() => handleSort("difficulty")}
               className="flex items-center hover:text-white transition-colors"
@@ -124,7 +197,7 @@ const NewGrid = ({ rowData, companies }) => {
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-3">
             <button
               onClick={() => handleSort("topic")}
               className="flex items-center hover:text-white transition-colors"
@@ -133,7 +206,7 @@ const NewGrid = ({ rowData, companies }) => {
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-2">
+          <div className="col-span-1">
             <button
               onClick={() => handleSort("rating")}
               className="flex items-center hover:text-white transition-colors"
@@ -155,14 +228,42 @@ const NewGrid = ({ rowData, companies }) => {
           filteredAndSortedData.map((question, index) => (
             <div
               key={question.id}
-              className={`grid grid-cols-12 gap-4 p-4 text-sm border-b border-gray-700 hover:bg-gray-750 transition-colors ${
-                index % 2 === 0 ? "bg-gray-800" : "bg-gray-775"
-              }`}
+              className={`grid grid-cols-12 gap-3 p-6 text-sm border-b border-gray-700 hover:bg-gray-750 transition-colors ${getRowBackgroundClass(
+                question
+              )} ${index % 2 === 0 ? "" : "bg-opacity-50"}`}
             >
-              <div className="col-span-3 text-white font-medium">
+              <div className="col-span-1 flex items-center justify-center">
+                <button
+                  onClick={() => toggleStatus(question.id, "completed")}
+                  className={`relative w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                    question.completed
+                      ? "bg-green-600 border-green-500 hover:bg-green-700"
+                      : "border-gray-500 hover:border-green-500 hover:bg-green-600/10"
+                  }`}
+                >
+                  {question.completed && (
+                    <Check className="w-4 h-4 text-white" />
+                  )}
+                </button>
+              </div>
+              <div className="col-span-1 flex items-center justify-center">
+                <button
+                  onClick={() => toggleStatus(question.id, "revision")}
+                  className={`relative w-6 h-6 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+                    question.revision
+                      ? "bg-yellow-600 border-yellow-500 hover:bg-yellow-700"
+                      : "border-gray-500 hover:border-yellow-500 hover:bg-yellow-600/10"
+                  }`}
+                >
+                  {question.revision && (
+                    <X className="w-4 h-4 text-white rotate-45" />
+                  )}
+                </button>
+              </div>
+              <div className="col-span-2 text-white font-medium">
                 {question.name}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-1">
                 <span
                   className={`px-2 py-1 text-xs font-medium rounded-full ${
                     String(question.difficulty).toLowerCase() === "easy"
@@ -189,7 +290,7 @@ const NewGrid = ({ rowData, companies }) => {
                   <span className="text-gray-400">-</span>
                 )}
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <a
                   href={question.link}
                   target="_blank"
@@ -199,7 +300,8 @@ const NewGrid = ({ rowData, companies }) => {
                   {question.link}
                 </a>
               </div>
-              <div className="col-span-2 flex items-center">
+
+              <div className="col-span-1 flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
