@@ -10,7 +10,11 @@ import {
 } from "lucide-react";
 
 import { cloneDeep } from "lodash";
-import { dsaQuestionsKey, frontEndQuestionsKey } from "../../constants/mock";
+import {
+  companiesKey,
+  dsaQuestionsKey,
+  frontEndQuestionsKey,
+} from "../../constants/mock";
 
 const AddQuestion = ({
   selectedNavItem,
@@ -18,6 +22,8 @@ const AddQuestion = ({
   sectionData,
   questionSectionsData,
   setIsOpen,
+  companies,
+  setCompanies,
 }) => {
   const [formData, setFormData] = useState({
     questionStatus: false,
@@ -48,9 +54,8 @@ const AddQuestion = ({
     if (!updatedSectionData[sectionKey]) {
       updatedSectionData[sectionKey] = {
         sectionId: sectionKey,
-        sectionName: questionSectionsData.find(
-          (item) => item.value === sectionKey
-        )?.name,
+        sectionName: questionSectionsData.find((item) => item.id === sectionKey)
+          ?.name,
         questions: [],
       };
     }
@@ -63,7 +68,27 @@ const AddQuestion = ({
       rating: parseInt(newQuestion.questionRating, 10),
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
-      companies: newQuestion.questionCompanies.split(",").map((c) => c.trim()),
+      companies: Array.from(
+        new Set(
+          newQuestion.questionCompanies.split(",").map((c) => {
+            const newCompany = c.trim().toLowerCase();
+            if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+              return companies[newCompany].name;
+            } else {
+              // If company doesn't exist, add it to the companies list
+              const newCompanyObj = {
+                id: newCompany,
+                name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+              };
+              const copyCompanies = cloneDeep(companies);
+              copyCompanies[newCompany] = newCompanyObj;
+              localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
+              setCompanies(copyCompanies);
+              return newCompanyObj.name;
+            }
+          })
+        )
+      ),
     });
 
     const localKey =
@@ -112,17 +137,8 @@ const AddQuestion = ({
     }
   };
 
-  const handleBackdropClick = (e) => {
-    if (e.target === e.currentTarget) {
-      setIsOpen(false);
-    }
-  };
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
       <div className="bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-800">
         {/* Modal Header */}
         <div className="sticky top-0 bg-gray-900 rounded-t-3xl border-b border-gray-800 p-6">
@@ -231,7 +247,7 @@ const AddQuestion = ({
                 )} bg-gray-800`}
               >
                 {questionSectionsData?.map((item) => (
-                  <option key={item.id} value={item.value}>
+                  <option key={item.id} value={item.id}>
                     {item.name}
                   </option>
                 ))}

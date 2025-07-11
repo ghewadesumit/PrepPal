@@ -7,6 +7,46 @@ export const sections = [
     id: "javascript",
     name: "JavaScript Functions",
   },
+  {
+    id: "jsArticles",
+    name: "JavaScript Articles",
+  },
+  {
+    id: "css",
+    name: "CSS",
+  },
+  {
+    id: "css",
+    name: "CSS Articles",
+  },
+  {
+    id: "react",
+    name: "React",
+  },
+  {
+    id: "react",
+    name: "React Articles",
+  },
+  {
+    id: "typescript",
+    name: "TypeScript",
+  },
+  {
+    id: "performance",
+    name: "Performance Articles",
+  },
+  {
+    id: "testing",
+    name: "Testing",
+  },
+  {
+    id: "accessibility",
+    name: "Accessibility (a11y) Articles",
+  },
+  {
+    id: "webSecurity",
+    name: "Web Security Articles",
+  },
 ];
 export const questions = {
   userInterface: {
