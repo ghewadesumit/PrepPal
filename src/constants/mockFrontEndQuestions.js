@@ -16,7 +16,7 @@ export const sections = [
     name: "CSS",
   },
   {
-    id: "css",
+    id: "cssArticles",
     name: "CSS Articles",
   },
   {
@@ -24,7 +24,7 @@ export const sections = [
     name: "React",
   },
   {
-    id: "react",
+    id: "reactArticles",
     name: "React Articles",
   },
   {
