@@ -8,6 +8,10 @@ export const sections = [
     name: "Two Pointers",
   },
   {
+    id: "slidingWindow",
+    name: "Sliding Window",
+  },
+  {
     id: "stack",
     name: "Stack",
   },
