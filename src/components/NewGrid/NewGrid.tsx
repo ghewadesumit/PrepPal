@@ -95,7 +95,7 @@ const NewGrid = ({
         updatedSectionData[sectionKey].questions[questionIndex][statusType] =
           !updatedSectionData[sectionKey].questions[questionIndex][statusType];
 
-        console.log("Updatin status", statusType, newStatus);
+        // console.log("Updatin status", statusType, newStatus);
         updateQuestionStatusCount(statusType, newStatus);
 
         // Update localStorage

@@ -102,6 +102,37 @@ const AddQuestion = ({
       newQuestion.questionRevision
     );
 
+    let newCompanies = [];
+    if (newQuestion.questionCompanies.trim().length > 0) {
+      const companyList = newQuestion.questionCompaniess.split(",");
+      if (companyList.length > 0) {
+        newCompanies = Array.from(
+          new Set(
+            companyList.map((c) => {
+              const newCompany = c.trim().toLowerCase();
+              if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+                return companies[newCompany].name;
+              } else {
+                // If company doesn't exist, add it to the companies list
+                const newCompanyObj = {
+                  id: newCompany,
+                  name:
+                    newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+                };
+                const copyCompanies = cloneDeep(companies);
+                copyCompanies[newCompany] = newCompanyObj;
+                localStorage.setItem(
+                  companiesKey,
+                  JSON.stringify(copyCompanies)
+                );
+                setCompanies(copyCompanies);
+                return newCompanyObj.name;
+              }
+            })
+          )
+        );
+      }
+    }
     updatedSectionData[sectionKey].questions.push({
       id: Date.now().toString(), // Simple unique ID
       name: newQuestion.questionName,
@@ -110,27 +141,7 @@ const AddQuestion = ({
       rating: parseInt(newQuestion.questionRating, 10),
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
-      companies: Array.from(
-        new Set(
-          newQuestion.questionCompanies.split(",").map((c) => {
-            const newCompany = c.trim().toLowerCase();
-            if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
-              return companies[newCompany].name;
-            } else {
-              // If company doesn't exist, add it to the companies list
-              const newCompanyObj = {
-                id: newCompany,
-                name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
-              };
-              const copyCompanies = cloneDeep(companies);
-              copyCompanies[newCompany] = newCompanyObj;
-              localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
-              setCompanies(copyCompanies);
-              return newCompanyObj.name;
-            }
-          })
-        )
-      ),
+      companies: newCompanies,
     });
 
     const localKey =
