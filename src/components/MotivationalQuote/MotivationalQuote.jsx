@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import * as MotivationQuotes from "../../constants/mockMotivationQuotes";
 
-const MotivaationalQuote = () => {
+const MotivationalQuote = () => {
   // Get today's motivation quote (same quote for the day)
   const [todayQuote, setTodayQuote] = useState(null);
 
@@ -24,11 +24,13 @@ const MotivaationalQuote = () => {
       <p className="text-lg text-white text-center font-medium italic mb-2">
         “{todayQuote.quote}”
       </p>
-      <span className="text-sm text-gray-400 text-center">
-        — {todayQuote.quoteauthor}
-      </span>
+      {todayQuote.quoteauthor !== "Unknown" && (
+        <span className="text-sm text-gray-400 text-center">
+          — {todayQuote.quoteauthor}
+        </span>
+      )}
     </div>
   );
 };
 
-export default MotivaationalQuote;
+export default MotivationalQuote;

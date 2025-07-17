@@ -10,7 +10,7 @@ import { Plus } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
 import AccordionSection from "./components/AccordionSection/AccordionSection";
 import ProgressBar from "./components/ProgressBar/ProgressBar";
-import MotivaationalQuote from "./components/MotivationalQuote/MotivaationalQuote";
+import MotivationalQuote from "./components/MotivationalQuote/MotivationalQuote";
 
 function App() {
   const {
@@ -120,7 +120,7 @@ function App() {
         <NavBar selected={selectedNavItem} setSelected={setSelectedNavItem} />
       </div>
       {/* Motivation Quotes*/}
-      <MotivaationalQuote />
+      <MotivationalQuote />
       {selectedNavItem === "dashboard" && <Dashboard />}
       {/* Main Content */}
       {selectedNavItem !== "dashboard" && (
