@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import * as QuestionMockData from "./constants/mock";
 import * as dsaQuestionMockData from "./constants/mockDsaQuestions";
 import * as frontendQuestionMockData from "./constants/mockFrontEndQuestions";
@@ -9,6 +9,7 @@ import { useQuestionStore } from "./store/useQuestionStore";
 import { Plus } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
 import AccordionSection from "./components/AccordionSection/AccordionSection";
+import ProgressBar from "./components/ProgressBar/ProgressBar";
 
 function App() {
   const {
@@ -17,6 +18,12 @@ function App() {
     selectedNavItem,
     setSelectedNavItem,
     initializeStatusCount,
+    totalDsaQuestions,
+    completedDsaQuestions,
+    revisionDsaQuestions,
+    totalFrontEndQuestions,
+    completedFrontEndQuestions,
+    revisionFrontEndQuestions,
   } = useQuestionStore((state) => state);
 
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
@@ -86,6 +93,30 @@ function App() {
     }));
   };
 
+  const { totalQuestions, completedQuestions, revisionQuestions } = useMemo(
+    () =>
+      selectedNavItem === "backend"
+        ? {
+            totalQuestions: totalDsaQuestions,
+            completedQuestions: completedDsaQuestions,
+            revisionQuestions: revisionDsaQuestions,
+          }
+        : {
+            totalQuestions: totalFrontEndQuestions,
+            completedQuestions: completedFrontEndQuestions,
+            revisionQuestions: revisionFrontEndQuestions,
+          },
+    [
+      selectedNavItem,
+      totalDsaQuestions,
+      completedDsaQuestions,
+      revisionDsaQuestions,
+      totalFrontEndQuestions,
+      completedFrontEndQuestions,
+      revisionFrontEndQuestions,
+    ]
+  );
+
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Navigation */}
@@ -120,6 +151,23 @@ function App() {
               {/* Subtle glow effect */}
               <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-200" />
             </button>
+          </div>
+
+          <div className="mb-8">
+            <ProgressBar
+              label="Completed Questions"
+              value={completedQuestions}
+              max={totalQuestions}
+              color="bg-blue-600"
+            />
+            <ProgressBar
+              label="Revision Questions"
+              value={revisionQuestions}
+              max={totalQuestions}
+              color="bg-purple-600"
+              reverse={true}
+              showZeroGood={true}
+            />
           </div>
 
           {/* Add Question Modal */}
