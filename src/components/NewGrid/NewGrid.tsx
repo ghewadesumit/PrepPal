@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ArrowUpDown, Search, Star, Check, X } from "lucide-react";
+import * as QuestionMockData from "../../constants/mock";
 
+import { useQuestionStore } from "../../store/useQuestionStore";
 const NewGrid = ({
   rowData,
   companies,
@@ -15,8 +17,23 @@ const NewGrid = ({
   const [companyFilter, setCompanyFilter] = useState("All");
 
   // Local storage keys (you might want to import these from constants)
-  const dsaQuestionsKey = "dsaQuestions";
-  const frontEndQuestionsKey = "frontEndQuestions";
+  const dsaQuestionsKey = QuestionMockData.dsaQuestionsKey;
+  const frontEndQuestionsKey = QuestionMockData.frontEndQuestionsKey;
+
+  const {
+    totalDsaQuestions,
+    completedDsaQuestions,
+    revisionDsaQuestions,
+    totalFrontEndQuestions,
+    completedFrontEndQuestions,
+    revisionFrontEndQuestions,
+    setCompletedDsaQuestions,
+    setRevisionDsaQuestions,
+    setTotalDsaQuestions,
+    setCompletedFrontEndQuestions,
+    setRevisionFrontEndQuestions,
+    setTotalFrontEndQuestions,
+  } = useQuestionStore((state) => state);
 
   const handleSort = (key) => {
     let direction = "asc";
@@ -24,6 +41,40 @@ const NewGrid = ({
       direction = "desc";
     }
     setSortConfig({ key, direction });
+  };
+
+  const updateQuestionStatusCount = (statusType, newStatus) => {
+    if (selectedNavItem === "backend") {
+      if (statusType === "completed") {
+        if (newStatus) {
+          setCompletedDsaQuestions(completedDsaQuestions + 1);
+        } else {
+          setCompletedDsaQuestions(completedDsaQuestions - 1);
+        }
+      }
+      if (statusType === "revision") {
+        if (newStatus) {
+          setRevisionDsaQuestions(revisionDsaQuestions + 1);
+        } else {
+          setRevisionDsaQuestions(revisionDsaQuestions - 1);
+        }
+      }
+    } else {
+      if (statusType === "completed") {
+        if (newStatus) {
+          setCompletedFrontEndQuestions(completedFrontEndQuestions + 1);
+        } else {
+          setCompletedFrontEndQuestions(completedFrontEndQuestions - 1);
+        }
+      }
+      if (statusType === "revision") {
+        if (newStatus) {
+          setRevisionFrontEndQuestions(revisionFrontEndQuestions + 1);
+        } else {
+          setRevisionFrontEndQuestions(revisionFrontEndQuestions - 1);
+        }
+      }
+    }
   };
 
   const toggleStatus = (questionId, statusType) => {
@@ -39,8 +90,13 @@ const NewGrid = ({
 
       if (questionIndex !== -1) {
         // Toggle the status
+        const newStatus =
+          !updatedSectionData[sectionKey].questions[questionIndex][statusType];
         updatedSectionData[sectionKey].questions[questionIndex][statusType] =
           !updatedSectionData[sectionKey].questions[questionIndex][statusType];
+
+        // console.log("Updatin status", statusType, newStatus);
+        updateQuestionStatusCount(statusType, newStatus);
 
         // Update localStorage
         const localKey =

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useQuestionStore } from "../../store/useQuestionStore";
 import {
   Plus,
   Link,
@@ -36,6 +37,21 @@ const AddQuestion = ({
     questionCompanies: "",
   });
 
+  const {
+    totalDsaQuestions,
+    completedDsaQuestions,
+    revisionDsaQuestions,
+    totalFrontEndQuestions,
+    completedFrontEndQuestions,
+    revisionFrontEndQuestions,
+    setCompletedDsaQuestions,
+    setRevisionDsaQuestions,
+    setTotalDsaQuestions,
+    setCompletedFrontEndQuestions,
+    setRevisionFrontEndQuestions,
+    setTotalFrontEndQuestions,
+  } = useQuestionStore((state) => state);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -44,6 +60,26 @@ const AddQuestion = ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const updateQuestionCount = (count, status, revision) => {
+    if (selectedNavItem === "backend") {
+      setTotalDsaQuestions(totalDsaQuestions + count);
+      if (status) {
+        setCompletedDsaQuestions(completedDsaQuestions + count);
+      }
+      if (revision) {
+        setRevisionDsaQuestions(revisionDsaQuestions + count);
+      }
+    } else {
+      setTotalFrontEndQuestions(totalFrontEndQuestions + count);
+      if (status) {
+        setCompletedFrontEndQuestions(completedFrontEndQuestions + count);
+      }
+      if (revision) {
+        setRevisionFrontEndQuestions(revisionFrontEndQuestions + count);
+      }
+    }
   };
 
   const storeNewQuestion = (newQuestion) => {
@@ -60,6 +96,43 @@ const AddQuestion = ({
       };
     }
 
+    updateQuestionCount(
+      1,
+      newQuestion.questionStatus,
+      newQuestion.questionRevision
+    );
+
+    let newCompanies = [];
+    if (newQuestion.questionCompanies.trim().length > 0) {
+      const companyList = newQuestion.questionCompaniess.split(",");
+      if (companyList.length > 0) {
+        newCompanies = Array.from(
+          new Set(
+            companyList.map((c) => {
+              const newCompany = c.trim().toLowerCase();
+              if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+                return companies[newCompany].name;
+              } else {
+                // If company doesn't exist, add it to the companies list
+                const newCompanyObj = {
+                  id: newCompany,
+                  name:
+                    newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+                };
+                const copyCompanies = cloneDeep(companies);
+                copyCompanies[newCompany] = newCompanyObj;
+                localStorage.setItem(
+                  companiesKey,
+                  JSON.stringify(copyCompanies)
+                );
+                setCompanies(copyCompanies);
+                return newCompanyObj.name;
+              }
+            })
+          )
+        );
+      }
+    }
     updatedSectionData[sectionKey].questions.push({
       id: Date.now().toString(), // Simple unique ID
       name: newQuestion.questionName,
@@ -68,27 +141,7 @@ const AddQuestion = ({
       rating: parseInt(newQuestion.questionRating, 10),
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
-      companies: Array.from(
-        new Set(
-          newQuestion.questionCompanies.split(",").map((c) => {
-            const newCompany = c.trim().toLowerCase();
-            if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
-              return companies[newCompany].name;
-            } else {
-              // If company doesn't exist, add it to the companies list
-              const newCompanyObj = {
-                id: newCompany,
-                name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
-              };
-              const copyCompanies = cloneDeep(companies);
-              copyCompanies[newCompany] = newCompanyObj;
-              localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
-              setCompanies(copyCompanies);
-              return newCompanyObj.name;
-            }
-          })
-        )
-      ),
+      companies: newCompanies,
     });
 
     const localKey =
@@ -242,9 +295,7 @@ const AddQuestion = ({
                 value={formData.questionSection}
                 onChange={handleInputChange}
                 required
-                className={`w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 ${getDifficultyColor(
-                  formData.questionDifficulty
-                )} bg-gray-800`}
+                className={`w-full px-4 py-3 border text-white border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200  bg-gray-800`}
               >
                 {questionSectionsData?.map((item) => (
                   <option key={item.id} value={item.id}>
