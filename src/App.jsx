@@ -3,13 +3,12 @@ import { useState, useEffect } from "react";
 import * as QuestionMockData from "./constants/mock";
 import * as dsaQuestionMockData from "./constants/mockDsaQuestions";
 import * as frontendQuestionMockData from "./constants/mockFrontEndQuestions";
-import Grid from "./components/Grid/Grid";
 import NavBar from "./components/NavBar/NavBar";
 import AddQuestion from "./components/AddQuestion/AddQuestion";
-import NewGrid from "./components/NewGrid/NewGrid";
 import { useQuestionStore } from "./store/useQuestionStore";
-import { Plus, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
+import AccordionSection from "./components/AccordionSection/AccordionSection";
 
 function App() {
   const {
@@ -87,24 +86,6 @@ function App() {
     }));
   };
 
-  // console.log("section Data", questionSections);
-  // console.log(
-  //   "Total DSA Questions:",
-  //   totalDsaQuestions,
-  //   "Completed DSA Questions:",
-  //   completedDsaQuestions,
-  //   "Revision DSA Questions:",
-  //   revisionDsaQuestions
-  // );
-  // console.log(
-  //   "Total Front Questions:",
-  //   totalFrontEndQuestions,
-  //   "Completed DSA Questions:",
-  //   completedFrontEndQuestions,
-  //   "Revision DSA Questions:",
-  //   revisionFrontEndQuestions
-  // );
-
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Navigation */}
@@ -164,62 +145,14 @@ function App() {
 
           {/* Accordion Sections */}
           {sectionData !== null && (
-            <div className="space-y-4">
-              {Object.keys(sectionData).map((sectionKey, index) => (
-                <div
-                  key={sectionKey}
-                  className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden"
-                  style={{
-                    animationDelay: `${index * 100}ms`,
-                  }}
-                >
-                  {/* Accordion Header */}
-                  <button
-                    onClick={() => toggleSection(sectionKey)}
-                    className="w-full flex items-center justify-between p-6 text-left hover:bg-gray-750 transition-colors"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
-                      <div>
-                        <h2 className="text-xl font-semibold text-white">
-                          {sectionData[sectionKey].sectionName}
-                        </h2>
-                        <p className="text-gray-400 text-sm mt-1">
-                          {sectionData[sectionKey].questions?.length || 0}{" "}
-                          questions
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="px-3 py-1 bg-gray-700 text-gray-300 text-sm font-medium rounded-full">
-                        {sectionData[sectionKey].questions?.length || 0} items
-                      </div>
-                      {expandedSections[sectionKey] ? (
-                        <ChevronDown className="w-5 h-5 text-gray-400" />
-                      ) : (
-                        <ChevronRight className="w-5 h-5 text-gray-400" />
-                      )}
-                    </div>
-                  </button>
-
-                  {/* Accordion Content */}
-                  {expandedSections[sectionKey] && (
-                    <div className="border-t border-gray-700 p-6">
-                      {/* <AgGrid rowData={sectionData[sectionKey].questions} /> */}
-                      {/* <Grid rowData={sectionData[sectionKey].questions} /> */}
-                      <NewGrid
-                        rowData={sectionData[sectionKey].questions}
-                        companies={companies}
-                        setSectionData={setSectionData}
-                        sectionData={sectionData}
-                        sectionKey={sectionKey}
-                        selectedNavItem={selectedNavItem}
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+            <AccordionSection
+              sectionData={sectionData}
+              expandedSections={expandedSections}
+              companies={companies}
+              setSectionData={setSectionData}
+              selectedNavItem={selectedNavItem}
+              toggleSectionWithKey={(sectionKey) => toggleSection(sectionKey)}
+            />
           )}
 
           {/* Empty State */}
