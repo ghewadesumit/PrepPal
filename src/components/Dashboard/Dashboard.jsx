@@ -83,7 +83,7 @@ const Dashboard = () => {
       let currentRevisionQuestions = 0;
       for (let key of dataKeys) {
         currentTotalQuestions += sessionRowData[key].questions.length;
-        console.log("parsedData", sessionRowData[key].questions);
+        // console.log("parsedData", sessionRowData[key].questions);
         sessionRowData[key].questions.forEach((question) => {
           if (question.completed) {
             currentCompletedQuestions += 1;
@@ -94,14 +94,14 @@ const Dashboard = () => {
         });
       }
 
-      console.log(
-        "Tota Questions:",
-        currentTotalQuestions,
-        "Completed  Questions:",
-        currentCompletedQuestions,
-        "Revision  Questions:",
-        currentRevisionQuestions
-      );
+      //   console.log(
+      //     "Tota Questions:",
+      //     currentTotalQuestions,
+      //     "Completed  Questions:",
+      //     currentCompletedQuestions,
+      //     "Revision  Questions:",
+      //     currentRevisionQuestions
+      //   );
       if (nav === "backend") {
         setTotalDsaQuestions(currentTotalQuestions);
         setCompletedDsaQuestions(currentCompletedQuestions);
@@ -116,7 +116,7 @@ const Dashboard = () => {
     }
   }, []);
 
-  console.log("Dashboard ", totalDsaQuestions);
+  //   console.log("Dashboard ", totalDsaQuestions);
   return (
     <div className="max-w-3xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-8">

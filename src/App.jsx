@@ -26,7 +26,7 @@ function App() {
       return;
     }
 
-    console.log("\n\n Checking *****************");
+    // console.log("\n\n Checking *****************");
     const sessionKey =
       selectedNavItem === "backend"
         ? QuestionMockData.dsaQuestionsKey
@@ -44,12 +44,12 @@ function App() {
         : frontendQuestionMockData.sections;
 
     setQuestionSections(sectionData);
-    console.log(
-      "selectedNavItem",
-      selectedNavItem,
-      " sessionRowData",
-      sessionRowData
-    );
+    // console.log(
+    //   "selectedNavItem",
+    //   selectedNavItem,
+    //   " sessionRowData",
+    //   sessionRowData
+    // );
     if (sessionRowData?.length) {
       const parsedData = JSON.parse(sessionRowData);
 
