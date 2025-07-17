@@ -2,7 +2,8 @@ import { create } from "zustand";
 
 export const useQuestionStore = create((set) => ({
   sectionData: null,
-
+  selectedNavItem: "backend",
+  setSelectedNavItem: (item) => set({ selectedNavItem: item }),
   totalDsaQuestions: 0,
   completedDsaQuestions: 0,
   revisionDsaQuestions: 0,
@@ -22,5 +23,7 @@ export const useQuestionStore = create((set) => ({
     set({ completedFrontEndQuestions: completed }),
   setTotalFrontEndQuestions: (total) => set({ totalFrontEndQuestions: total }),
 
-  setSectionData: (data) => set({ sectionData: data }),
+  setSectionData: (data) => {
+    return set({ sectionData: data });
+  },
 }));
