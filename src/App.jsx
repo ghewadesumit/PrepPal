@@ -12,14 +12,22 @@ import { Plus, ChevronDown, ChevronRight } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
-  // const [sectionData, setSectionData] = useState(null);
-  const { sectionData, setSectionData, selectedNavItem, setSelectedNavItem } =
-    useQuestionStore((state) => state);
-  // const [selectedNavItem, setSelectedNavItem] = useState("backend");
+  const {
+    sectionData,
+    setSectionData,
+    selectedNavItem,
+    setSelectedNavItem,
+    initializeStatusCount,
+  } = useQuestionStore((state) => state);
+
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
   const [questionSections, setQuestionSections] = useState([]);
   const [expandedSections, setExpandedSections] = useState({});
   const [companies, setCompanies] = useState({});
+
+  useEffect(() => {
+    initializeStatusCount();
+  }, []);
 
   useEffect(() => {
     if (selectedNavItem === "dashboard") {

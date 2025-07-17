@@ -1,8 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useQuestionStore } from "../../store/useQuestionStore";
-import * as QuestionMockData from "../../constants/mock";
-import * as dsaQuestionMockData from "../../constants/mockDsaQuestions";
-import * as frontendQuestionMockData from "../../constants/mockFrontEndQuestions";
 
 const ProgressBar = ({
   label,
@@ -48,73 +45,7 @@ const Dashboard = () => {
     totalFrontEndQuestions,
     completedFrontEndQuestions,
     revisionFrontEndQuestions,
-    setCompletedDsaQuestions,
-    setRevisionDsaQuestions,
-    setTotalDsaQuestions,
-    setCompletedFrontEndQuestions,
-    setRevisionFrontEndQuestions,
-    setTotalFrontEndQuestions,
   } = useQuestionStore((state) => state);
-
-  useEffect(() => {
-    const selectedNavItemArray = [
-      {
-        nav: "backend",
-        sessionKey: QuestionMockData.dsaQuestionsKey,
-        defaultRowData: dsaQuestionMockData.questions,
-      },
-      {
-        nav: "frontend",
-        sessionKey: QuestionMockData.frontEndQuestionsKey,
-        defaultRowData: frontendQuestionMockData.questions,
-      },
-    ];
-
-    for (let item of selectedNavItemArray) {
-      const { nav, sessionKey, defaultRowData } = item;
-      let sessionRowData = localStorage.getItem(sessionKey);
-
-      sessionRowData = sessionRowData
-        ? JSON.parse(sessionRowData)
-        : defaultRowData;
-      const dataKeys = Object.keys(sessionRowData);
-      let currentTotalQuestions = 0;
-      let currentCompletedQuestions = 0;
-      let currentRevisionQuestions = 0;
-      for (let key of dataKeys) {
-        currentTotalQuestions += sessionRowData[key].questions.length;
-        // console.log("parsedData", sessionRowData[key].questions);
-        sessionRowData[key].questions.forEach((question) => {
-          if (question.completed) {
-            currentCompletedQuestions += 1;
-          }
-          if (question.revision) {
-            currentRevisionQuestions += 1;
-          }
-        });
-      }
-
-      //   console.log(
-      //     "Tota Questions:",
-      //     currentTotalQuestions,
-      //     "Completed  Questions:",
-      //     currentCompletedQuestions,
-      //     "Revision  Questions:",
-      //     currentRevisionQuestions
-      //   );
-      if (nav === "backend") {
-        setTotalDsaQuestions(currentTotalQuestions);
-        setCompletedDsaQuestions(currentCompletedQuestions);
-        setRevisionDsaQuestions(currentRevisionQuestions);
-      }
-
-      if (nav === "frontend") {
-        setTotalFrontEndQuestions(currentTotalQuestions);
-        setCompletedFrontEndQuestions(currentCompletedQuestions);
-        setRevisionFrontEndQuestions(currentRevisionQuestions);
-      }
-    }
-  }, []);
 
   //   console.log("Dashboard ", totalDsaQuestions);
   return (
