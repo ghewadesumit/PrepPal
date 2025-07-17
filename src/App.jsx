@@ -13,24 +13,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 
 function App() {
   // const [sectionData, setSectionData] = useState(null);
-  const {
-    sectionData,
-    setSectionData,
-    selectedNavItem,
-    setSelectedNavItem,
-    setTotalDsaQuestions,
-    setCompletedDsaQuestions,
-    setRevisionDsaQuestions,
-    setTotalFrontEndQuestions,
-    setCompletedFrontEndQuestions,
-    setRevisionFrontEndQuestions,
-    totalDsaQuestions,
-    completedDsaQuestions,
-    revisionDsaQuestions,
-    totalFrontEndQuestions,
-    completedFrontEndQuestions,
-    revisionFrontEndQuestions,
-  } = useQuestionStore((state) => state);
+  const { sectionData, setSectionData, selectedNavItem, setSelectedNavItem } =
+    useQuestionStore((state) => state);
   // const [selectedNavItem, setSelectedNavItem] = useState("backend");
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
   const [questionSections, setQuestionSections] = useState([]);
@@ -68,42 +52,6 @@ function App() {
     );
     if (sessionRowData?.length) {
       const parsedData = JSON.parse(sessionRowData);
-      const dataKeys = Object.keys(parsedData);
-      let currentTotalQuestions = 0;
-      let currentCompletedQuestions = 0;
-      let currentRevisionQuestions = 0;
-      for (let key of dataKeys) {
-        currentTotalQuestions += parsedData[key].questions.length;
-        console.log("parsedData", parsedData[key].questions);
-        parsedData[key].questions.forEach((question) => {
-          if (question.completed) {
-            currentCompletedQuestions += 1;
-          }
-          if (question.revision) {
-            currentRevisionQuestions += 1;
-          }
-        });
-      }
-
-      console.log(
-        "Tota Questions:",
-        currentTotalQuestions,
-        "Completed  Questions:",
-        currentCompletedQuestions,
-        "Revision  Questions:",
-        currentRevisionQuestions
-      );
-      if (selectedNavItem === "backend") {
-        setTotalDsaQuestions(currentTotalQuestions);
-        setCompletedDsaQuestions(currentCompletedQuestions);
-        setRevisionDsaQuestions(currentRevisionQuestions);
-      }
-
-      if (selectedNavItem === "frontend") {
-        setTotalFrontEndQuestions(currentTotalQuestions);
-        setCompletedFrontEndQuestions(currentCompletedQuestions);
-        setRevisionFrontEndQuestions(currentRevisionQuestions);
-      }
 
       setSectionData(parsedData);
     } else {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useQuestionStore } from "../../store/useQuestionStore";
 import {
   Plus,
   Link,
@@ -36,6 +37,21 @@ const AddQuestion = ({
     questionCompanies: "",
   });
 
+  const {
+    totalDsaQuestions,
+    completedDsaQuestions,
+    revisionDsaQuestions,
+    totalFrontEndQuestions,
+    completedFrontEndQuestions,
+    revisionFrontEndQuestions,
+    setCompletedDsaQuestions,
+    setRevisionDsaQuestions,
+    setTotalDsaQuestions,
+    setCompletedFrontEndQuestions,
+    setRevisionFrontEndQuestions,
+    setTotalFrontEndQuestions,
+  } = useQuestionStore((state) => state);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -44,6 +60,26 @@ const AddQuestion = ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const updateQuestionCount = (count, status, revision) => {
+    if (selectedNavItem === "backend") {
+      setTotalDsaQuestions(totalDsaQuestions + count);
+      if (status) {
+        setCompletedDsaQuestions(completedDsaQuestions + count);
+      }
+      if (revision) {
+        setRevisionDsaQuestions(revisionDsaQuestions + count);
+      }
+    } else {
+      setTotalFrontEndQuestions(totalFrontEndQuestions + count);
+      if (status) {
+        setCompletedFrontEndQuestions(completedFrontEndQuestions + count);
+      }
+      if (revision) {
+        setRevisionFrontEndQuestions(revisionFrontEndQuestions + count);
+      }
+    }
   };
 
   const storeNewQuestion = (newQuestion) => {
@@ -59,6 +95,12 @@ const AddQuestion = ({
         questions: [],
       };
     }
+
+    updateQuestionCount(
+      1,
+      newQuestion.questionStatus,
+      newQuestion.questionRevision
+    );
 
     updatedSectionData[sectionKey].questions.push({
       id: Date.now().toString(), // Simple unique ID
