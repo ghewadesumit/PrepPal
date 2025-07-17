@@ -4,6 +4,7 @@ export const useQuestionStore = create((set) => ({
   sectionData: null,
   selectedNavItem: "backend",
   setSelectedNavItem: (item) => set({ selectedNavItem: item }),
+
   totalDsaQuestions: 0,
   completedDsaQuestions: 0,
   revisionDsaQuestions: 0,
@@ -11,8 +12,8 @@ export const useQuestionStore = create((set) => ({
   setRevisionDsaQuestions: (revision) =>
     set({ revisionDsaQuestions: revision }),
   setCompletedDsaQuestions: (completed) =>
-    set({ completedQuestions: completed }),
-  setTotalDsaQuestions: (total) => set({ totalQuestions: total }),
+    set({ completedDsaQuestions: completed }),
+  setTotalDsaQuestions: (total) => set({ totalDsaQuestions: total }),
 
   totalFrontEndQuestions: 0,
   completedFrontEndQuestions: 0,

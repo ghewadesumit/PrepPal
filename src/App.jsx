@@ -24,6 +24,12 @@ function App() {
     setTotalFrontEndQuestions,
     setCompletedFrontEndQuestions,
     setRevisionFrontEndQuestions,
+    totalDsaQuestions,
+    completedDsaQuestions,
+    revisionDsaQuestions,
+    totalFrontEndQuestions,
+    completedFrontEndQuestions,
+    revisionFrontEndQuestions,
   } = useQuestionStore((state) => state);
   // const [selectedNavItem, setSelectedNavItem] = useState("backend");
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
@@ -32,10 +38,16 @@ function App() {
   const [companies, setCompanies] = useState({});
 
   useEffect(() => {
+    if (selectedNavItem === "dashboard") {
+      return;
+    }
+
+    console.log("\n\n Checking *****************");
     const sessionKey =
       selectedNavItem === "backend"
         ? QuestionMockData.dsaQuestionsKey
         : QuestionMockData.frontEndQuestionsKey;
+
     const sessionRowData = localStorage.getItem(sessionKey);
 
     const localStorageCompaniesData = localStorage.getItem(
@@ -48,17 +60,22 @@ function App() {
         : frontendQuestionMockData.sections;
 
     setQuestionSections(sectionData);
-
+    console.log(
+      "selectedNavItem",
+      selectedNavItem,
+      " sessionRowData",
+      sessionRowData
+    );
     if (sessionRowData?.length) {
       const parsedData = JSON.parse(sessionRowData);
-      const dataKeys = Object.keys(data);
+      const dataKeys = Object.keys(parsedData);
       let currentTotalQuestions = 0;
       let currentCompletedQuestions = 0;
       let currentRevisionQuestions = 0;
       for (let key of dataKeys) {
-        currentTotalQuestions += parsedData[key].length;
-
-        parsedData[key].forEach((question) => {
+        currentTotalQuestions += parsedData[key].questions.length;
+        console.log("parsedData", parsedData[key].questions);
+        parsedData[key].questions.forEach((question) => {
           if (question.completed) {
             currentCompletedQuestions += 1;
           }
@@ -68,11 +85,21 @@ function App() {
         });
       }
 
+      console.log(
+        "Tota Questions:",
+        currentTotalQuestions,
+        "Completed  Questions:",
+        currentCompletedQuestions,
+        "Revision  Questions:",
+        currentRevisionQuestions
+      );
       if (selectedNavItem === "backend") {
         setTotalDsaQuestions(currentTotalQuestions);
         setCompletedDsaQuestions(currentCompletedQuestions);
         setRevisionDsaQuestions(currentRevisionQuestions);
-      } else {
+      }
+
+      if (selectedNavItem === "frontend") {
         setTotalFrontEndQuestions(currentTotalQuestions);
         setCompletedFrontEndQuestions(currentCompletedQuestions);
         setRevisionFrontEndQuestions(currentRevisionQuestions);
@@ -104,7 +131,23 @@ function App() {
     }));
   };
 
-  console.log("section Data", questionSections);
+  // console.log("section Data", questionSections);
+  // console.log(
+  //   "Total DSA Questions:",
+  //   totalDsaQuestions,
+  //   "Completed DSA Questions:",
+  //   completedDsaQuestions,
+  //   "Revision DSA Questions:",
+  //   revisionDsaQuestions
+  // );
+  // console.log(
+  //   "Total Front Questions:",
+  //   totalFrontEndQuestions,
+  //   "Completed DSA Questions:",
+  //   completedFrontEndQuestions,
+  //   "Revision DSA Questions:",
+  //   revisionFrontEndQuestions
+  // );
 
   return (
     <div className="min-h-screen bg-gray-900">
