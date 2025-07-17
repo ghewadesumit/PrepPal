@@ -7,11 +7,12 @@ import Grid from "./components/Grid/Grid";
 import NavBar from "./components/NavBar/NavBar";
 import AddQuestion from "./components/AddQuestion/AddQuestion";
 import NewGrid from "./components/NewGrid/NewGrid";
-
+import { useQuestionStore } from "./store/useQuestionStore";
 import { Plus, ChevronDown, ChevronRight } from "lucide-react";
 
 function App() {
-  const [sectionData, setSectionData] = useState(null);
+  // const [sectionData, setSectionData] = useState(null);
+  const { sectionData, setSectionData } = useQuestionStore((state) => state);
   const [selectedNavItem, setSelectedNavItem] = useState("backend");
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
   const [questionSections, setQuestionSections] = useState([]);
