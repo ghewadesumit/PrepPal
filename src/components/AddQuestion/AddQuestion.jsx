@@ -149,7 +149,6 @@ const AddQuestion = ({
       }
     }
 
-    //get rid of special characters and spaces and make the questionName camelCase
     const questionId = formatToCamelCase(newQuestion.questionName);
     updatedSectionData[sectionKey].questions.push({
       createdAt: Date.now().toString(), // Simple unique ID
@@ -161,7 +160,7 @@ const AddQuestion = ({
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
       companies: newCompanies,
-      sections: [sectionKey],
+      sections: [],
     });
 
     const localKey =
