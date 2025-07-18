@@ -82,8 +82,47 @@ const AddQuestion = ({
     }
   };
 
+  // function to get id of the question based on the name
+  const formatToCamelCase = (str) => {
+    return str
+      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+      .trim() // Trim leading and trailing spaces
+      .split(" ")
+      .map((word, index) =>
+        index === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join("");
+  };
+
+  const getCompanies = (companyList) => {
+    return Array.from(
+      new Set(
+        companyList.map((c) => {
+          const newCompany = c.trim().toLowerCase();
+          if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+            return companies[newCompany].name;
+          } else {
+            // If company doesn't exist, add it to the companies list
+            const newCompanyObj = {
+              id: newCompany,
+              name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+            };
+            const copyCompanies = cloneDeep(companies);
+            copyCompanies[newCompany] = newCompanyObj;
+            localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
+            setCompanies(copyCompanies);
+            return newCompanyObj.name;
+          }
+        })
+      )
+    );
+  };
+
   const storeNewQuestion = (newQuestion) => {
-    console.log("Debug");
+    // console.log("Debug");
     const updatedSectionData = { ...sectionData };
     const sectionKey = newQuestion.questionSection;
 
@@ -106,35 +145,15 @@ const AddQuestion = ({
     if (newQuestion.questionCompanies.trim().length > 0) {
       const companyList = newQuestion.questionCompaniess.split(",");
       if (companyList.length > 0) {
-        newCompanies = Array.from(
-          new Set(
-            companyList.map((c) => {
-              const newCompany = c.trim().toLowerCase();
-              if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
-                return companies[newCompany].name;
-              } else {
-                // If company doesn't exist, add it to the companies list
-                const newCompanyObj = {
-                  id: newCompany,
-                  name:
-                    newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
-                };
-                const copyCompanies = cloneDeep(companies);
-                copyCompanies[newCompany] = newCompanyObj;
-                localStorage.setItem(
-                  companiesKey,
-                  JSON.stringify(copyCompanies)
-                );
-                setCompanies(copyCompanies);
-                return newCompanyObj.name;
-              }
-            })
-          )
-        );
+        newCompanies = getCompanies(companyList);
       }
     }
+
+    //get rid of special characters and spaces and make the questionName camelCase
+    const questionId = formatToCamelCase(newQuestion.questionName);
     updatedSectionData[sectionKey].questions.push({
-      id: Date.now().toString(), // Simple unique ID
+      createdAt: Date.now().toString(), // Simple unique ID
+      id: questionId, // Simple unique ID
       name: newQuestion.questionName,
       link: newQuestion.questionLink,
       difficulty: newQuestion.questionDifficulty,
@@ -142,6 +161,7 @@ const AddQuestion = ({
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
       companies: newCompanies,
+      sections: [sectionKey],
     });
 
     const localKey =
