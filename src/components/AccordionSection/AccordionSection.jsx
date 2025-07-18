@@ -7,6 +7,7 @@ const AccordionSection = ({
   companies,
   setSectionData,
   selectedNavItem,
+  questionSectionsData,
   toggleSectionWithKey,
 }) => {
   return (
@@ -28,16 +29,16 @@ const AccordionSection = ({
               <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-500 rounded-full" />
               <div>
                 <h2 className="text-xl font-semibold text-white">
-                  {sectionData[sectionKey].sectionName}
+                  {questionSectionsData[sectionKey].name}
                 </h2>
                 <p className="text-gray-400 text-sm mt-1">
-                  {sectionData[sectionKey].questions?.length || 0} questions
+                  {sectionData[sectionKey]?.length || 0} questions
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <div className="px-3 py-1 bg-gray-700 text-gray-300 text-sm font-medium rounded-full">
-                {sectionData[sectionKey].questions?.length || 0} items
+                {sectionData[sectionKey]?.length || 0} items
               </div>
               {expandedSections[sectionKey] ? (
                 <ChevronDown className="w-5 h-5 text-gray-400" />
@@ -53,7 +54,7 @@ const AccordionSection = ({
               {/* <AgGrid rowData={sectionData[sectionKey].questions} /> */}
               {/* <Grid rowData={sectionData[sectionKey].questions} /> */}
               <NewGrid
-                rowData={sectionData[sectionKey].questions}
+                rowData={sectionData[sectionKey]}
                 companies={companies}
                 setSectionData={setSectionData}
                 sectionData={sectionData}

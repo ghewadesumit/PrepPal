@@ -21,18 +21,18 @@ const NewGrid = ({
   const frontEndQuestionsKey = QuestionMockData.frontEndQuestionsKey;
 
   const {
-    totalDsaQuestions,
     completedDsaQuestions,
     revisionDsaQuestions,
-    totalFrontEndQuestions,
+
     completedFrontEndQuestions,
     revisionFrontEndQuestions,
     setCompletedDsaQuestions,
     setRevisionDsaQuestions,
-    setTotalDsaQuestions,
+
     setCompletedFrontEndQuestions,
     setRevisionFrontEndQuestions,
-    setTotalFrontEndQuestions,
+    allDsaQuestionsSet,
+    allFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
 
   const handleSort = (key) => {
@@ -124,7 +124,17 @@ const NewGrid = ({
 
   const filteredAndSortedData =
     rowData
-      ?.filter((item) => {
+      ?.map((itemName) => {
+        // First get the question object from the reference
+        const allQuestionRef =
+          selectedNavItem === "backend"
+            ? allDsaQuestionsSet
+            : allFrontEndQuestionsSet;
+        return allQuestionRef[itemName];
+      })
+      .filter((item) => {
+        if (!item) return false;
+
         const matchesSearch = item.name
           .toLowerCase()
           .includes(filter.toLowerCase());
@@ -146,6 +156,7 @@ const NewGrid = ({
             item.companies.some(
               (company) => company.toLowerCase() === companyFilter.toLowerCase()
             ));
+
         return (
           matchesSearch && matchesDifficulty && matchesStatus && matchesCompany
         );

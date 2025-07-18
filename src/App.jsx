@@ -1,8 +1,8 @@
 import "./App.css";
 import { useState, useEffect, useMemo } from "react";
 import * as QuestionMockData from "./constants/mock";
-import * as dsaQuestionMockData from "./constants/mockDsaQuestions";
-import * as frontendQuestionMockData from "./constants/mockFrontEndQuestions";
+import * as dsaQuestionMockData from "./constants/mockDsaQuestionsCopy";
+import * as frontendQuestionMockData from "./constants/mockFrontEndQuestionsCopy";
 import NavBar from "./components/NavBar/NavBar";
 import AddQuestion from "./components/AddQuestion/AddQuestion";
 import { useQuestionStore } from "./store/useQuestionStore";
@@ -44,15 +44,16 @@ function App() {
     // console.log("\n\n Checking *****************");
     const sessionKey =
       selectedNavItem === "backend"
-        ? QuestionMockData.dsaQuestionsKey
-        : QuestionMockData.frontEndQuestionsKey;
+        ? QuestionMockData.dsaSectionKey
+        : QuestionMockData.frontEndSectionKey;
 
-    const sessionRowData = localStorage.getItem(sessionKey);
+    let sessionRowData = localStorage.getItem(sessionKey);
 
     const localStorageCompaniesData = localStorage.getItem(
       QuestionMockData.companiesKey
     );
 
+    //sections (Type of dsa questions)
     const sectionData =
       selectedNavItem === "backend"
         ? dsaQuestionMockData.sections
@@ -193,6 +194,7 @@ function App() {
               sectionData={sectionData}
               expandedSections={expandedSections}
               companies={companies}
+              questionSectionsData={questionSections}
               setSectionData={setSectionData}
               selectedNavItem={selectedNavItem}
               toggleSectionWithKey={(sectionKey) => toggleSection(sectionKey)}

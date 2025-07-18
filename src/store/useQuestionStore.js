@@ -1,26 +1,36 @@
 import { create } from "zustand";
 import * as QuestionMockData from "../constants/mock";
 import * as dsaQuestionMockData from "../constants/mockDsaQuestionsCopy";
-// import * as frontendQuestionMockData from "../constants/mockFrontEndQuestions";
+import * as frontendQuestionMockData from "../constants/mockFrontEndQuestionsCopy";
 
 const selectedNavItemArray = [
   {
     nav: "backend",
     sectionSessionKey: QuestionMockData.dsaSectionKey,
-    questionSetSessionKey: QuestionMockData.dsaQuestionSetKey,
+    questionSetSessionKey: QuestionMockData.dsaQuestionsKey,
     defaultRowData: dsaQuestionMockData.questions,
     questionSet: dsaQuestionMockData.dsaQuestions,
   },
-  // {
-  //   nav: "frontend",
-  //   sessionKey: QuestionMockData.frontEndQuestionsKey,
-  //   defaultRowData: frontendQuestionMockData.questions,
-  // },
+  {
+    nav: "frontend",
+    sectionSessionKey: QuestionMockData.frontEndSectionKey,
+    questionSetSessionKey: QuestionMockData.frontEndQuestionsKey,
+    defaultRowData: frontendQuestionMockData.questions,
+    questionSet: frontendQuestionMockData.frontendQuestions,
+  },
 ];
 
 export const useQuestionStore = create((set, get) => ({
   sectionData: null,
   selectedNavItem: "backend",
+
+  allDsaQuestionsSet: null,
+  allFrontEndQuestionsSet: null,
+  questionSections: [],
+  setQuestionSections: (data) => set({ questionSections: data }),
+  setAllDsaQuestionsSet: (data) => set({ allDsaQuestionsSet: data }),
+  setAllFrontEndQuestionsSet: (data) => set({ allFrontEndQuestionsSet: data }),
+
   setSelectedNavItem: (item) => set({ selectedNavItem: item }),
 
   totalDsaQuestions: 0,
@@ -48,7 +58,6 @@ export const useQuestionStore = create((set, get) => ({
 
   // this will count all the questions in the local storage only once.
   initializeStatusCount: () => {
-    const dsaQuestionSet = dsaQuestionMockData.dsaQuestions;
     for (let item of selectedNavItemArray) {
       const {
         nav,
@@ -57,6 +66,18 @@ export const useQuestionStore = create((set, get) => ({
         defaultRowData,
         questionSet,
       } = item;
+
+      const {
+        setTotalDsaQuestions,
+        setCompletedDsaQuestions,
+        setRevisionDsaQuestions,
+        setTotalFrontEndQuestions,
+        setCompletedFrontEndQuestions,
+        setRevisionFrontEndQuestions,
+        setAllDsaQuestionsSet,
+        setAllFrontEndQuestionsSet,
+        setQuestionSections,
+      } = get();
 
       //get section and question id object
       let sessionRowData = localStorage.getItem(sectionSessionKey);
@@ -78,34 +99,29 @@ export const useQuestionStore = create((set, get) => ({
         currentTotalQuestions += sessionRowData[key].length;
 
         sessionRowData[key].forEach((question) => {
-          if (dsaQuestionSet[question].completed) {
+          if (questionSetData[question].completed) {
             currentCompletedQuestions += 1;
           }
-          if (dsaQuestionSet[question].revision) {
+          if (questionSetData[question].revision) {
             currentRevisionQuestions += 1;
           }
         });
       }
 
-      const {
-        setTotalDsaQuestions,
-        setCompletedDsaQuestions,
-        setRevisionDsaQuestions,
-        setTotalFrontEndQuestions,
-        setCompletedFrontEndQuestions,
-        setRevisionFrontEndQuestions,
-      } = get();
-
       if (nav === "backend") {
+        setAllDsaQuestionsSet(questionSetData);
         setTotalDsaQuestions(currentTotalQuestions);
         setCompletedDsaQuestions(currentCompletedQuestions);
         setRevisionDsaQuestions(currentRevisionQuestions);
+        setQuestionSections;
       }
 
       if (nav === "frontend") {
+        setAllFrontEndQuestionsSet(questionSetData);
         setTotalFrontEndQuestions(currentTotalQuestions);
         setCompletedFrontEndQuestions(currentCompletedQuestions);
         setRevisionFrontEndQuestions(currentRevisionQuestions);
+        setQuestionSections;
       }
     }
   },
