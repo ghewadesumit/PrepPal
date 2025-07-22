@@ -33,6 +33,9 @@ const NewGrid = ({
     setRevisionFrontEndQuestions,
     allDsaQuestionsSet,
     allFrontEndQuestionsSet,
+
+    setAllDsaQuestionsSet,
+    setAllFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
 
   const handleSort = (key) => {
@@ -78,37 +81,32 @@ const NewGrid = ({
   };
 
   const toggleStatus = (questionId, statusType) => {
-    if (!setSectionData || !sectionData) return;
+    // Find the question
+    const [currentQuestionSet, currentSetQuestionSet, currentKey] =
+      selectedNavItem === "backend"
+        ? [allDsaQuestionsSet, setAllDsaQuestionsSet, dsaQuestionsKey]
+        : [
+            allFrontEndQuestionsSet,
+            setAllFrontEndQuestionsSet,
+            frontEndQuestionsKey,
+          ];
+    const question = { ...currentQuestionSet[questionId] };
+    if (question) {
+      // Toggle the status
+      const newStatus = !question[statusType];
+      question[statusType] = newStatus;
 
-    const updatedSectionData = { ...sectionData };
+      // Update the question in the respective set
+      updateQuestionStatusCount(statusType, newStatus);
 
-    // Find the section containing this question
-    Object.keys(updatedSectionData).forEach((sectionKey) => {
-      const questionIndex = updatedSectionData[sectionKey].questions.findIndex(
-        (q) => q.id === questionId
-      );
+      const newQuestionSet = {
+        ...currentQuestionSet,
+        [questionId]: question,
+      };
+      localStorage.setItem(currentKey, JSON.stringify(newQuestionSet));
 
-      if (questionIndex !== -1) {
-        // Toggle the status
-        const newStatus =
-          !updatedSectionData[sectionKey].questions[questionIndex][statusType];
-        updatedSectionData[sectionKey].questions[questionIndex][statusType] =
-          !updatedSectionData[sectionKey].questions[questionIndex][statusType];
-
-        // console.log("Updatin status", statusType, newStatus);
-        updateQuestionStatusCount(statusType, newStatus);
-
-        // Update localStorage
-        const localKey =
-          selectedNavItem === "backend"
-            ? dsaQuestionsKey
-            : frontEndQuestionsKey;
-        localStorage.setItem(localKey, JSON.stringify(updatedSectionData));
-
-        // Update state
-        setSectionData(updatedSectionData);
-      }
-    });
+      currentSetQuestionSet(newQuestionSet);
+    }
   };
 
   const getRowBackgroundClass = (question) => {
