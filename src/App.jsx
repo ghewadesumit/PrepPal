@@ -28,7 +28,7 @@ function App() {
   } = useQuestionStore((state) => state);
 
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
-  const [questionSections, setQuestionSections] = useState([]);
+  const [questionSections, setQuestionSections] = useState({});
   const [expandedSections, setExpandedSections] = useState({});
   const [companies, setCompanies] = useState({});
 

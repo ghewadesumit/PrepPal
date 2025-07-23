@@ -58,6 +58,18 @@ export const useQuestionStore = create((set, get) => ({
 
   // this will count all the questions in the local storage only once.
   initializeStatusCount: () => {
+    const {
+      setTotalDsaQuestions,
+      setCompletedDsaQuestions,
+      setRevisionDsaQuestions,
+      setTotalFrontEndQuestions,
+      setCompletedFrontEndQuestions,
+      setRevisionFrontEndQuestions,
+      setAllDsaQuestionsSet,
+      setAllFrontEndQuestionsSet,
+      setQuestionSections,
+    } = get();
+
     for (let item of selectedNavItemArray) {
       const {
         nav,
@@ -66,18 +78,6 @@ export const useQuestionStore = create((set, get) => ({
         defaultRowData,
         questionSet,
       } = item;
-
-      const {
-        setTotalDsaQuestions,
-        setCompletedDsaQuestions,
-        setRevisionDsaQuestions,
-        setTotalFrontEndQuestions,
-        setCompletedFrontEndQuestions,
-        setRevisionFrontEndQuestions,
-        setAllDsaQuestionsSet,
-        setAllFrontEndQuestionsSet,
-        setQuestionSections,
-      } = get();
 
       //get section and question id object
       let sessionRowData = localStorage.getItem(sectionSessionKey);
