@@ -164,7 +164,7 @@ const AddQuestion = ({
 
     let newCompanies = [];
     if (newQuestion.questionCompanies.trim().length > 0) {
-      const companyList = newQuestion.questionCompaniess.split(",");
+      const companyList = newQuestion.questionCompanies.split(",");
       if (companyList.length > 0) {
         newCompanies = getCompanies(companyList);
       }
