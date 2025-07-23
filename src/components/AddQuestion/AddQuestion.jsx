@@ -12,13 +12,13 @@ import {
 } from "lucide-react";
 
 import { cloneDeep } from "lodash";
+import { updateCalendarActivity } from "../../utils/helper";
 import {
   companiesKey,
   dsaQuestionsKey,
   dsaSectionKey,
   frontEndQuestionsKey,
   frontEndSectionKey,
-  activityCalendarKey,
 } from "../../constants/mock";
 
 const AddQuestion = ({
@@ -69,26 +69,6 @@ const AddQuestion = ({
   } = useActivityStore((state) => state);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const updateCalendarActivity = (date = new Date()) => {
-    const storageKey = activityCalendarKey;
-    const formattedDate = date.toISOString().split("T")[0];
-
-    const newCalendarData = cloneDeep(calendarData);
-    const newActivityCalendarData = cloneDeep(activityCalendarData);
-    const dayData = newCalendarData.find((item) => item.date === formattedDate);
-    if (dayData) {
-      dayData.count += 1;
-      dayData.level = Math.min(Math.ceil(dayData.count / 2), 4); // 0-4 levels based on count
-    }
-    setCalendarData(newCalendarData);
-    // todo: we will fetch the year from the selected year
-    newActivityCalendarData[new Date().getFullYear()] = newCalendarData;
-
-    localStorage.setItem(storageKey, JSON.stringify(newActivityCalendarData));
-
-    setActivityCalendarData(newActivityCalendarData);
-  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -222,7 +202,12 @@ const AddQuestion = ({
 
     newQuestionSet[questionId] = newQuestionObject;
     currentSetQuestionSet(newQuestionSet);
-    updateCalendarActivity();
+    updateCalendarActivity(
+      calendarData,
+      activityCalendarData,
+      setCalendarData,
+      setActivityCalendarData
+    );
 
     localStorage.setItem(currentQuestionKey, JSON.stringify(newQuestionSet));
 

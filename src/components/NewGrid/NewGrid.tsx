@@ -3,6 +3,8 @@ import { ArrowUpDown, Search, Star, Check, X } from "lucide-react";
 import * as QuestionMockData from "../../constants/mock";
 
 import { useQuestionStore } from "../../store/useQuestionStore";
+import { updateCalendarActivity } from "../../utils/helper";
+import { useActivityStore } from "../../store/useActivityStore";
 const NewGrid = ({
   rowData,
   companies,
@@ -38,6 +40,13 @@ const NewGrid = ({
     setAllFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
 
+  const {
+    calendarData,
+    activityCalendarData,
+    setCalendarData,
+    setActivityCalendarData,
+  } = useActivityStore((state) => state);
+
   const handleSort = (key) => {
     let direction = "asc";
     if (sortConfig.key === key && sortConfig.direction === "asc") {
@@ -51,6 +60,12 @@ const NewGrid = ({
       if (statusType === "completed") {
         if (newStatus) {
           setCompletedDsaQuestions(completedDsaQuestions + 1);
+          updateCalendarActivity(
+            calendarData,
+            activityCalendarData,
+            setCalendarData,
+            setActivityCalendarData
+          );
         } else {
           setCompletedDsaQuestions(completedDsaQuestions - 1);
         }
@@ -60,6 +75,12 @@ const NewGrid = ({
           setRevisionDsaQuestions(revisionDsaQuestions + 1);
         } else {
           setRevisionDsaQuestions(revisionDsaQuestions - 1);
+          updateCalendarActivity(
+            calendarData,
+            activityCalendarData,
+            setCalendarData,
+            setActivityCalendarData
+          );
         }
       }
     } else {
@@ -94,6 +115,7 @@ const NewGrid = ({
     if (question) {
       // Toggle the status
       const newStatus = !question[statusType];
+
       question[statusType] = newStatus;
 
       // Update the question in the respective set
