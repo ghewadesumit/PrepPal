@@ -3,6 +3,7 @@ export const dsaSectionKey = "dsaSectionSessionKey";
 export const frontEndQuestionsKey = "frontEndQuestionsSessionKey";
 export const frontEndSectionKey = "frontEndSectionSessionKey";
 export const companiesKey = "companiesKey";
+export const activityCalendarKey = "activityCalendarKey";
 
 export const companiesData = {
   amazon: {

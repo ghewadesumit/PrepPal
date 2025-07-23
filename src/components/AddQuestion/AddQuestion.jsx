@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuestionStore } from "../../store/useQuestionStore";
+import { useActivityStore } from "../../store/useActivityStore";
 import {
   Plus,
   Link,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { cloneDeep } from "lodash";
+import { updateCalendarActivity } from "../../utils/helper";
 import {
   companiesKey,
   dsaQuestionsKey,
@@ -58,6 +60,13 @@ const AddQuestion = ({
     setAllDsaQuestionsSet,
     setAllFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
+
+  const {
+    calendarData,
+    setCalendarData,
+    activityCalendarData,
+    setActivityCalendarData,
+  } = useActivityStore((state) => state);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -193,6 +202,12 @@ const AddQuestion = ({
 
     newQuestionSet[questionId] = newQuestionObject;
     currentSetQuestionSet(newQuestionSet);
+    updateCalendarActivity(
+      calendarData,
+      activityCalendarData,
+      setCalendarData,
+      setActivityCalendarData
+    );
 
     localStorage.setItem(currentQuestionKey, JSON.stringify(newQuestionSet));
 
