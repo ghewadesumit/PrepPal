@@ -1,8 +1,9 @@
 import "./App.css";
 import { useState, useEffect, useMemo } from "react";
 import * as QuestionMockData from "./constants/mock";
-import * as dsaQuestionMockData from "./constants/mockDsaQuestions";
-import * as frontendQuestionMockData from "./constants/mockFrontEndQuestions";
+import * as dsaQuestionMockData from "./constants/mockDsaQuestionsCopy";
+import * as frontendQuestionMockData from "./constants/mockFrontEndQuestionsCopy";
+
 import NavBar from "./components/NavBar/NavBar";
 import AddQuestion from "./components/AddQuestion/AddQuestion";
 import { useQuestionStore } from "./store/useQuestionStore";
@@ -28,7 +29,7 @@ function App() {
   } = useQuestionStore((state) => state);
 
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
-  const [questionSections, setQuestionSections] = useState([]);
+  const [questionSections, setQuestionSections] = useState({});
   const [expandedSections, setExpandedSections] = useState({});
   const [companies, setCompanies] = useState({});
 
@@ -41,35 +42,37 @@ function App() {
       return;
     }
 
-    // console.log("\n\n Checking *****************");
-    const sessionKey =
-      selectedNavItem === "backend"
-        ? QuestionMockData.dsaQuestionsKey
-        : QuestionMockData.frontEndQuestionsKey;
+    const { dsaSectionKey, frontEndSectionKey } = QuestionMockData;
 
-    const sessionRowData = localStorage.getItem(sessionKey);
+    const [currentSections, currentSectionQuestions, currentSectionKey] =
+      selectedNavItem === "backend"
+        ? [
+            dsaQuestionMockData.sections,
+            dsaQuestionMockData.questions,
+            dsaSectionKey,
+          ]
+        : [
+            frontendQuestionMockData.sections,
+            frontendQuestionMockData.questions,
+            frontEndSectionKey,
+          ];
+    // console.log("\n\n Checking *****************");
+
+    let sessionRowData = localStorage.getItem(currentSectionKey);
 
     const localStorageCompaniesData = localStorage.getItem(
       QuestionMockData.companiesKey
     );
 
-    const sectionData =
-      selectedNavItem === "backend"
-        ? dsaQuestionMockData.sections
-        : frontendQuestionMockData.sections;
+    //sections (Type of dsa questions)
 
-    setQuestionSections(sectionData);
+    setQuestionSections(currentSections);
 
     if (sessionRowData?.length) {
       const parsedData = JSON.parse(sessionRowData);
-
       setSectionData(parsedData);
     } else {
-      const rowInitialData =
-        selectedNavItem === "backend"
-          ? dsaQuestionMockData.questions
-          : frontendQuestionMockData.questions;
-      setSectionData(rowInitialData);
+      setSectionData(currentSectionQuestions);
     }
 
     if (localStorageCompaniesData?.length) {
@@ -193,6 +196,7 @@ function App() {
               sectionData={sectionData}
               expandedSections={expandedSections}
               companies={companies}
+              questionSectionsData={questionSections}
               setSectionData={setSectionData}
               selectedNavItem={selectedNavItem}
               toggleSectionWithKey={(sectionKey) => toggleSection(sectionKey)}

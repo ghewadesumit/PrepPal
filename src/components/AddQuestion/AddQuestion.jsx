@@ -14,7 +14,9 @@ import { cloneDeep } from "lodash";
 import {
   companiesKey,
   dsaQuestionsKey,
+  dsaSectionKey,
   frontEndQuestionsKey,
+  frontEndSectionKey,
 } from "../../constants/mock";
 
 const AddQuestion = ({
@@ -50,6 +52,10 @@ const AddQuestion = ({
     setCompletedFrontEndQuestions,
     setRevisionFrontEndQuestions,
     setTotalFrontEndQuestions,
+    allDsaQuestionsSet,
+    allFrontEndQuestionsSet,
+    setAllDsaQuestionsSet,
+    setAllFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,18 +88,72 @@ const AddQuestion = ({
     }
   };
 
+  // function to get id of the question based on the name
+  const formatToCamelCase = (str) => {
+    return str
+      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
+      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
+      .trim() // Trim leading and trailing spaces
+      .split(" ")
+      .map((word, index) =>
+        index === 0
+          ? word.toLowerCase()
+          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      )
+      .join("");
+  };
+
+  const getCompanies = (companyList) => {
+    return Array.from(
+      new Set(
+        companyList.map((c) => {
+          const newCompany = c.trim().toLowerCase();
+          if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
+            return companies[newCompany].name;
+          } else {
+            // If company doesn't exist, add it to the companies list
+            const newCompanyObj = {
+              id: newCompany,
+              name: newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
+            };
+            const copyCompanies = cloneDeep(companies);
+            copyCompanies[newCompany] = newCompanyObj;
+            localStorage.setItem(companiesKey, JSON.stringify(copyCompanies));
+            setCompanies(copyCompanies);
+            return newCompanyObj.name;
+          }
+        })
+      )
+    );
+  };
+
   const storeNewQuestion = (newQuestion) => {
-    console.log("Debug");
+    // console.log("Debug");
+
+    const [
+      currentQuestionSet,
+      currentSetQuestionSet,
+      currentQuestionKey,
+      currentSectionKey,
+    ] =
+      selectedNavItem === "backend"
+        ? [
+            allDsaQuestionsSet,
+            setAllDsaQuestionsSet,
+            dsaQuestionsKey,
+            dsaSectionKey,
+          ]
+        : [
+            allFrontEndQuestionsSet,
+            setAllFrontEndQuestionsSet,
+            frontEndQuestionsKey,
+            frontEndSectionKey,
+          ];
     const updatedSectionData = { ...sectionData };
     const sectionKey = newQuestion.questionSection;
 
     if (!updatedSectionData[sectionKey]) {
-      updatedSectionData[sectionKey] = {
-        sectionId: sectionKey,
-        sectionName: questionSectionsData.find((item) => item.id === sectionKey)
-          ?.name,
-        questions: [],
-      };
+      updatedSectionData[sectionKey] = [];
     }
 
     updateQuestionCount(
@@ -106,35 +166,16 @@ const AddQuestion = ({
     if (newQuestion.questionCompanies.trim().length > 0) {
       const companyList = newQuestion.questionCompaniess.split(",");
       if (companyList.length > 0) {
-        newCompanies = Array.from(
-          new Set(
-            companyList.map((c) => {
-              const newCompany = c.trim().toLowerCase();
-              if (Object.prototype.hasOwnProperty.call(companies, newCompany)) {
-                return companies[newCompany].name;
-              } else {
-                // If company doesn't exist, add it to the companies list
-                const newCompanyObj = {
-                  id: newCompany,
-                  name:
-                    newCompany.charAt(0).toUpperCase() + newCompany.slice(1),
-                };
-                const copyCompanies = cloneDeep(companies);
-                copyCompanies[newCompany] = newCompanyObj;
-                localStorage.setItem(
-                  companiesKey,
-                  JSON.stringify(copyCompanies)
-                );
-                setCompanies(copyCompanies);
-                return newCompanyObj.name;
-              }
-            })
-          )
-        );
+        newCompanies = getCompanies(companyList);
       }
     }
-    updatedSectionData[sectionKey].questions.push({
-      id: Date.now().toString(), // Simple unique ID
+
+    const questionId = formatToCamelCase(newQuestion.questionName);
+    updatedSectionData[sectionKey].push(questionId);
+
+    const newQuestionObject = {
+      createdAt: Date.now().toString(), // Simple unique ID
+      id: questionId, // Simple unique ID
       name: newQuestion.questionName,
       link: newQuestion.questionLink,
       difficulty: newQuestion.questionDifficulty,
@@ -142,13 +183,20 @@ const AddQuestion = ({
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
       companies: newCompanies,
-    });
+      sections: [sectionKey],
+    };
 
-    const localKey =
-      selectedNavItem === "backend" ? dsaQuestionsKey : frontEndQuestionsKey;
-    localStorage.setItem(localKey, JSON.stringify(updatedSectionData));
+    const newQuestionSet = {
+      ...currentQuestionSet,
+    };
+
+    newQuestionSet[questionId] = newQuestionObject;
+    currentSetQuestionSet(newQuestionSet);
+
+    localStorage.setItem(currentQuestionKey, JSON.stringify(newQuestionSet));
 
     setSectionData(cloneDeep(updatedSectionData));
+    localStorage.setItem(currentSectionKey, JSON.stringify(updatedSectionData));
   };
 
   const handleSubmit = async (e) => {
@@ -297,9 +345,12 @@ const AddQuestion = ({
                 required
                 className={`w-full px-4 py-3 border text-white border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200  bg-gray-800`}
               >
-                {questionSectionsData?.map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
+                {Reflect.ownKeys(questionSectionsData)?.map((key) => (
+                  <option
+                    key={questionSectionsData[key].id}
+                    value={questionSectionsData[key].id}
+                  >
+                    {questionSectionsData[key].name}
                   </option>
                 ))}
               </select>

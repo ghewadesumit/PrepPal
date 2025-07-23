@@ -1,5 +1,7 @@
 export const dsaQuestionsKey = "dsaQuestionsSessionKey";
-export const frontEndQuestionsKey = "frontEndQuestionsKey";
+export const dsaSectionKey = "dsaSectionSessionKey";
+export const frontEndQuestionsKey = "frontEndQuestionsSessionKey";
+export const frontEndSectionKey = "frontEndSectionSessionKey";
 export const companiesKey = "companiesKey";
 
 export const companiesData = {
