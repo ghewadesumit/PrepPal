@@ -33,7 +33,8 @@ const AddQuestion = ({
     questionRevision: false,
     questionName: "",
     questionLink: "",
-    questionSection: questionSectionsData?.[0]?.id || "", // Default to first section
+    questionSection:
+      questionSectionsData[Reflect.ownKeys(questionSectionsData)[0]].id || "", // Default to first section
     questionDifficulty: "easy",
     questionRating: "3",
     questionCompanies: "",
