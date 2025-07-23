@@ -7,6 +7,8 @@ import * as frontendQuestionMockData from "./constants/mockFrontEndQuestionsCopy
 import NavBar from "./components/NavBar/NavBar";
 import AddQuestion from "./components/AddQuestion/AddQuestion";
 import { useQuestionStore } from "./store/useQuestionStore";
+import { useActivityStore } from "./store/useActivityStore";
+
 import { Plus } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
 import AccordionSection from "./components/AccordionSection/AccordionSection";
@@ -28,6 +30,8 @@ function App() {
     revisionFrontEndQuestions,
   } = useQuestionStore((state) => state);
 
+  const { setInitialActivityCalendarData } = useActivityStore((state) => state);
+
   const [isOpenAddQuestion, setIsOpenAddQuestion] = useState(false);
   const [questionSections, setQuestionSections] = useState({});
   const [expandedSections, setExpandedSections] = useState({});
@@ -35,6 +39,7 @@ function App() {
 
   useEffect(() => {
     initializeStatusCount();
+    setInitialActivityCalendarData();
   }, []);
 
   useEffect(() => {
