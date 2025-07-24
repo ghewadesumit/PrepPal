@@ -56,47 +56,38 @@ const NewGrid = ({
   };
 
   const updateQuestionStatusCount = (statusType, newStatus) => {
-    if (selectedNavItem === "backend") {
-      if (statusType === "completed") {
-        if (newStatus) {
-          setCompletedDsaQuestions(completedDsaQuestions + 1);
-          updateCalendarActivity(
-            calendarData,
-            activityCalendarData,
-            setCalendarData,
-            setActivityCalendarData
-          );
-        } else {
-          setCompletedDsaQuestions(completedDsaQuestions - 1);
-        }
+    const [
+      currentSetCompletedQuestionsCount,
+      currentSetRevisionQuestionsCount,
+    ] =
+      selectedNavItem === "backend"
+        ? [setCompletedDsaQuestions, setRevisionDsaQuestions]
+        : [setCompletedFrontEndQuestions, setRevisionFrontEndQuestions];
+
+    if (statusType === "completed") {
+      if (newStatus) {
+        currentSetCompletedQuestionsCount(completedDsaQuestions + 1);
+        updateCalendarActivity(
+          calendarData,
+          activityCalendarData,
+          setCalendarData,
+          setActivityCalendarData
+        );
+      } else {
+        currentSetCompletedQuestionsCount(completedDsaQuestions - 1);
       }
-      if (statusType === "revision") {
-        if (newStatus) {
-          setRevisionDsaQuestions(revisionDsaQuestions + 1);
-        } else {
-          setRevisionDsaQuestions(revisionDsaQuestions - 1);
-          updateCalendarActivity(
-            calendarData,
-            activityCalendarData,
-            setCalendarData,
-            setActivityCalendarData
-          );
-        }
-      }
-    } else {
-      if (statusType === "completed") {
-        if (newStatus) {
-          setCompletedFrontEndQuestions(completedFrontEndQuestions + 1);
-        } else {
-          setCompletedFrontEndQuestions(completedFrontEndQuestions - 1);
-        }
-      }
-      if (statusType === "revision") {
-        if (newStatus) {
-          setRevisionFrontEndQuestions(revisionFrontEndQuestions + 1);
-        } else {
-          setRevisionFrontEndQuestions(revisionFrontEndQuestions - 1);
-        }
+    }
+    if (statusType === "revision") {
+      if (newStatus) {
+        currentSetRevisionQuestionsCount(revisionDsaQuestions + 1);
+      } else {
+        currentSetRevisionQuestionsCount(revisionDsaQuestions - 1);
+        updateCalendarActivity(
+          calendarData,
+          activityCalendarData,
+          setCalendarData,
+          setActivityCalendarData
+        );
       }
     }
   };
