@@ -50,46 +50,6 @@ export const sections = {
 };
 
 export const frontendQuestions = {
-  allQuestions: {
-    counter: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "counter",
-      name: "Counter",
-      link: "https://www.greatfrontend.com/questions/user-interface/counter",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["userInterface"],
-    },
-    accordion: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "accordion",
-      name: "Accordion",
-      link: "https://www.greatfrontend.com/questions/user-interface/accordion",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["userInterface"],
-    },
-    arrayPrototypeAt: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "arrayPrototypeAt",
-      name: "Array.prototype.at",
-      link: "https://www.greatfrontend.com/questions/javascript/array-at",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["javascript"],
-    },
-  },
+  allQuestions: {},
 };
-export const questions = {
-  userInterface: ["counter", "accordion"],
-  javascript: ["arrayPrototypeAt"],
-};
+export const questions = {};

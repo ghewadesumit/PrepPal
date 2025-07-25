@@ -67,48 +67,7 @@ export const sections = {
 };
 
 export const dsaQuestions = {
-  allQuestions: {
-    twoSum: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "twoSum",
-      name: "Two Sum",
-      link: "https://leetcode.com/problems/two-sum",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["arrayHashTable", "twoPointers"],
-    },
-    groupAnagrams: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "groupAnagrams",
-      name: "Group Anagrams",
-      link: "https://leetcode.com/problems/group-anagrams/",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["arrayHashTable", "twoPointers"],
-    },
-
-    validPalindrome: {
-      createdAt: "2023-10-01T00:00:00Z",
-      id: "validPalindrome",
-      name: "Valid Palindrome",
-      link: "https://leetcode.com/problems/valid-palindrome/",
-      difficulty: "Easy",
-      rating: 4,
-      completed: true,
-      revision: false,
-      companies: ["Amazon", "Google", "Facebook", "Microsoft", "Apple"],
-      sections: ["arrayHashTable", "twoPointers"],
-    },
-  },
+  allQuestions: {},
 };
 
-export const questions = {
-  arrayHashTable: ["twoSum", "groupAnagrams"],
-  twoPointers: ["validPalindrome"],
-};
+export const questions = {};
