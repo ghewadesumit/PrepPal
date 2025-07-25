@@ -51,7 +51,6 @@ const Dashboard = () => {
 
   const { calendarData } = useActivityStore((state) => state);
 
-  console.log("Dashboard ", calendarData);
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-8">

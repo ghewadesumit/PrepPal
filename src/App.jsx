@@ -14,6 +14,7 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import AccordionSection from "./components/AccordionSection/AccordionSection";
 import ProgressBar from "./components/ProgressBar/ProgressBar";
 import MotivationalQuote from "./components/MotivationalQuote/MotivationalQuote";
+import { isEmpty } from "lodash";
 
 function App() {
   const {
@@ -196,7 +197,7 @@ function App() {
           )}
 
           {/* Accordion Sections */}
-          {sectionData !== null && (
+          {!isEmpty(sectionData) && (
             <AccordionSection
               sectionData={sectionData}
               expandedSections={expandedSections}
@@ -209,7 +210,7 @@ function App() {
           )}
 
           {/* Empty State */}
-          {sectionData === null && (
+          {isEmpty(sectionData) && (
             <div className="flex flex-col items-center justify-center py-20">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-full flex items-center justify-center mb-4">
                 <Plus className="w-8 h-8 text-white" />
