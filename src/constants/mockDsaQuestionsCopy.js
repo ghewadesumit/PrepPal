@@ -64,6 +64,14 @@ export const sections = {
     id: "greedy",
     name: "Greedy",
   },
+  interval: {
+    id: "interval",
+    name: "Interval",
+  },
+  prefixSum: {
+    id: "prefixSum",
+    name: "Prefix Sum",
+  },
 };
 
 export const dsaQuestions = {
