@@ -7,7 +7,7 @@ const ProgressBar = ({
   showZeroGood = false,
 }) => {
   const percent = max > 0 ? Math.round((value / max) * 100) : 0;
-  const displayValue = reverse ? max - value : value;
+  const displayValue = value;
   const displayPercent =
     reverse && max > 0 ? Math.round(((max - value) / max) * 100) : percent;
   const barColor = color || "bg-blue-600";

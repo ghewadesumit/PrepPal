@@ -10,8 +10,13 @@ export const getInitialCalendarData = () => {
   const currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
+    // Format date manually to avoid timezone issues
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+
     data.push({
-      date: currentDate.toISOString().split("T")[0],
+      date: `${year}-${month}-${day}`,
       count: 0,
       level: 0,
     });
@@ -62,6 +67,17 @@ export const useActivityStore = create((set, get) => ({
       });
     } else {
       // if there is data for the current year, set it
+
+      for (let i = 0; i < parsedData[currentYear].length; i++) {
+        const date = new Date(parsedData[currentYear][i].date);
+        parsedData[currentYear][i].date = `${date.getFullYear()}-${String(
+          date.getMonth() + 1
+        ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+        parsedData[currentYear][i].count =
+          parsedData[currentYear][i].count || 0;
+        parsedData[currentYear][i].level =
+          parsedData[currentYear][i].level || 0;
+      }
       setCalendarData(parsedData[currentYear]);
       set({
         activityCalendarData: parsedData,
