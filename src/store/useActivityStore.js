@@ -10,8 +10,13 @@ export const getInitialCalendarData = () => {
   const currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
+    // Format date manually to avoid timezone issues
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+
     data.push({
-      date: currentDate.toISOString().split("T")[0],
+      date: `${year}-${month}-${day}`,
       count: 0,
       level: 0,
     });
