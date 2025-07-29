@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
 import { RotateCcw } from "lucide-react";
+import confetti from "canvas-confetti";
 
 /**
  * Features I want to show:
@@ -17,7 +18,6 @@ const Pomodoro = () => {
   const [isStart, setIsStart] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [activeTab, setActiveTab] = useState("focus");
-
   // const [task, setTask] = useState("");
   const timerRef = React.useRef(null);
 
@@ -41,23 +41,26 @@ const Pomodoro = () => {
   };
 
   const updateTimeLeft = () => {
-    if (timeLeft <= 0) {
-      clearInterval(timerRef.current);
+    setTimeLeft((prev) => {
+      if (prev <= 0) {
+        clearInterval(timerRef.current);
 
-      // update calendar activity when you complete a pomodoro
-      if (activeTab === "focus") {
-        updateCalendarActivity(
-          calendarData,
-          activityCalendarData,
-          setCalendarData,
-          setActivityCalendarData
-        );
+        // update calendar activity when you complete a pomodoro
+        if (activeTab === "focus") {
+          confetti({ particleCount: 150, spread: 60 });
+          updateCalendarActivity(
+            calendarData,
+            activityCalendarData,
+            setCalendarData,
+            setActivityCalendarData
+          );
+        }
+        setIsStart(false);
+        return 0;
       }
-      setIsStart(false);
-      return;
-    }
 
-    setTimeLeft((prev) => prev - 1);
+      return prev - 1;
+    });
   };
 
   useEffect(() => {
@@ -94,10 +97,10 @@ const Pomodoro = () => {
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 relative">
       <div className="max-w-2xl mx-auto backdrop-blur-lg bg-gray-900/60 rounded-2xl p-8 shadow-2xl border border-gray-700/50">
+        {/* {showConfetti && <MyCelebrationPage />} */}
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-8 text-center">
           Pomodoro Timer
         </h1>
-
         {/* Timer */}
         <div className="text-white flex flex-col items-center justify-center space-y-8">
           <div className="flex space-x-4 bg-gray-800/50 p-2 rounded-lg">
