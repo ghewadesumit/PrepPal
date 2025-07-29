@@ -9,12 +9,14 @@ import AddQuestion from "./components/AddQuestion/AddQuestion";
 import { useQuestionStore } from "./store/useQuestionStore";
 import { useActivityStore } from "./store/useActivityStore";
 
-import { Plus } from "lucide-react";
+import { Plus, Music } from "lucide-react";
 import Dashboard from "./components/Dashboard/Dashboard";
 import AccordionSection from "./components/AccordionSection/AccordionSection";
 import ProgressBar from "./components/ProgressBar/ProgressBar";
 import MotivationalQuote from "./components/MotivationalQuote/MotivationalQuote";
 import { isEmpty } from "lodash";
+import Pomodoro from "./pages/Pomodoro/Pomodoro";
+import BackgroundMusic from "./components/BackgroundMusic/BackgroundMusic";
 
 function App() {
   const {
@@ -37,6 +39,7 @@ function App() {
   const [questionSections, setQuestionSections] = useState({});
   const [expandedSections, setExpandedSections] = useState({});
   const [companies, setCompanies] = useState({});
+  const [isMusicOpen, setIsMusicOpen] = useState(false);
 
   useEffect(() => {
     initializeStatusCount();
@@ -128,11 +131,37 @@ function App() {
       <div className="sticky top-0 z-40 backdrop-blur-lg bg-gray-900/95 border-b border-gray-800">
         <NavBar selected={selectedNavItem} setSelected={setSelectedNavItem} />
       </div>
+
+      {/* Music Toggle Button */}
+      <div className="fixed bottom-8 left-8 z-50">
+        <button
+          onClick={() => setIsMusicOpen(!isMusicOpen)}
+          className={`p-4 rounded-full transition-all duration-300 backdrop-blur-lg border border-gray-700/50 shadow-lg ${
+            isMusicOpen
+              ? "bg-blue-500/80 text-white hover:bg-blue-600/80 hover:shadow-blue-500/25"
+              : "bg-gray-800/80 text-gray-300 hover:bg-gray-700/80 hover:text-white hover:shadow-blue-500/25"
+          }`}
+          aria-label="Toggle Music"
+        >
+          <Music className="h-6 w-6" />
+        </button>
+
+        {/* Music Panel */}
+        {isMusicOpen && (
+          <div className="absolute bottom-20 left-0 bg-gray-800/95 backdrop-blur-sm p-4 rounded-lg border border-gray-700/50 shadow-xl w-64">
+            <BackgroundMusic />
+          </div>
+        )}
+      </div>
+
       {/* Motivation Quotes*/}
       <MotivationalQuote />
       {selectedNavItem === "dashboard" && <Dashboard />}
+
+      {/* Pomodoro */}
+      {selectedNavItem === "pomodoro" && <Pomodoro />}
       {/* Main Content */}
-      {selectedNavItem !== "dashboard" && (
+      {(selectedNavItem === "backend" || selectedNavItem === "frontend") && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Header Section */}
           <div className="flex items-center justify-between mb-8">
