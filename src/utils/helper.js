@@ -7,9 +7,14 @@ export const updateCalendarActivity = (
   setCalendarData,
   setActivityCalendarData
 ) => {
-  const date = new Date();
+  const currentDate = new Date();
   const storageKey = activityCalendarKey;
-  const formattedDate = date.toISOString().split("T")[0];
+
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+  const day = String(currentDate.getDate()).padStart(2, "0");
+
+  const formattedDate = `${year}-${month}-${day}`;
 
   const newCalendarData = cloneDeep(calendarData);
   const newActivityCalendarData = cloneDeep(activityCalendarData);

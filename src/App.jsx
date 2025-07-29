@@ -15,6 +15,7 @@ import AccordionSection from "./components/AccordionSection/AccordionSection";
 import ProgressBar from "./components/ProgressBar/ProgressBar";
 import MotivationalQuote from "./components/MotivationalQuote/MotivationalQuote";
 import { isEmpty } from "lodash";
+import Pomodoro from "./pages/Pomodoro/Pomodoro";
 
 function App() {
   const {
@@ -131,8 +132,11 @@ function App() {
       {/* Motivation Quotes*/}
       <MotivationalQuote />
       {selectedNavItem === "dashboard" && <Dashboard />}
+
+      {/* Pomodoro */}
+      {selectedNavItem === "pomodoro" && <Pomodoro />}
       {/* Main Content */}
-      {selectedNavItem !== "dashboard" && (
+      {(selectedNavItem === "backend" || selectedNavItem === "frontend") && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           {/* Header Section */}
           <div className="flex items-center justify-between mb-8">

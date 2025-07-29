@@ -25,6 +25,17 @@ const NavBar = ({ setSelected, selected }) => {
                   {item.name}
                 </button>
               ))}
+
+              <button
+                className={`px-4 py-2 rounded font-semibold transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm ${
+                  selected === "pomodoro"
+                    ? "bg-blue-600 text-white shadow"
+                    : "bg-gray-700 text-gray-200 hover:bg-blue-500 hover:text-white"
+                }`}
+                onClick={() => setSelected("pomodoro")}
+              >
+                Pomodoro
+              </button>
             </div>
           </div>
           <div className="flex items-center">
