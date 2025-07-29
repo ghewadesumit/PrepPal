@@ -22,7 +22,7 @@ const Pomodoro = () => {
   const [isStart, setIsStart] = useState(false);
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [activeTab, setActiveTab] = useState("focus");
-  const [isMusicOpen, setIsMusicOpen] = useState(false);
+
   // const [task, setTask] = useState("");
   const timerRef = React.useRef(null);
 
@@ -101,27 +101,6 @@ const Pomodoro = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 relative">
-      {/* Music Toggle Button */}
-      <div className="fixed bottom-8 left-8 z-50">
-        <button
-          onClick={() => setIsMusicOpen(!isMusicOpen)}
-          className={`p-4 rounded-full transition-all duration-300 backdrop-blur-lg border border-gray-700/50 shadow-lg ${
-            isMusicOpen
-              ? "bg-blue-500/80 text-white hover:bg-blue-600/80 hover:shadow-blue-500/25"
-              : "bg-gray-800/80 text-gray-300 hover:bg-gray-700/80 hover:text-white hover:shadow-blue-500/25"
-          }`}
-          aria-label="Toggle Music"
-        >
-          <Music className="h-6 w-6" />
-        </button>
-
-        {/* Music Panel */}
-        {isMusicOpen && (
-          <div className="absolute bottom-20 left-0 bg-gray-800/95 backdrop-blur-sm p-4 rounded-lg border border-gray-700/50 shadow-xl w-64">
-            <BackgroundMusic />
-          </div>
-        )}
-      </div>
       <div className="max-w-2xl mx-auto backdrop-blur-lg bg-gray-900/60 rounded-2xl p-8 shadow-2xl border border-gray-700/50">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-8 text-center">
           Pomodoro Timer
