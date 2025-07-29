@@ -56,7 +56,7 @@ const Pomodoro = () => {
           );
         }
         setIsStart(false);
-        return 0;
+        return 25 * 60;
       }
 
       return prev - 1;
@@ -97,7 +97,6 @@ const Pomodoro = () => {
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 relative">
       <div className="max-w-2xl mx-auto backdrop-blur-lg bg-gray-900/60 rounded-2xl p-8 shadow-2xl border border-gray-700/50">
-        {/* {showConfetti && <MyCelebrationPage />} */}
         <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent mb-8 text-center">
           Pomodoro Timer
         </h1>
