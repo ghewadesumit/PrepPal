@@ -91,9 +91,6 @@ const Pomodoro = () => {
   const formattedMinutes = minutes < 10 ? `0${minutes}` : minutes;
   const formattedSeconds = seconds < 10 ? `0${seconds}` : seconds;
 
-  // Import the RotateCcw icon from lucide-react at the top of your file:
-  // import { RotateCcw } from "lucide-react";
-
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 relative">
       <div className="max-w-2xl mx-auto backdrop-blur-lg bg-gray-900/60 rounded-2xl p-8 shadow-2xl border border-gray-700/50">
