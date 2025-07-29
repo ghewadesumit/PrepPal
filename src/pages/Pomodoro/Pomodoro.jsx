@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
-import { RotateCcw, Music } from "lucide-react";
-import BackgroundMusic from "../../components/BackgroundMusic/BackgroundMusic";
-// const pomodoroTime = {
-//   focusTime: "",
-//   activityName: "",
-// };
+import { RotateCcw } from "lucide-react";
 
 /**
  * Features I want to show:
