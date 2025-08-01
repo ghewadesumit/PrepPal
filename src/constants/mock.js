@@ -5,7 +5,7 @@ export const frontEndSectionKey = "frontEndSectionSessionKey";
 export const companiesKey = "companiesKey";
 export const activityCalendarKey = "activityCalendarKey";
 
-export const appName = "DevPrep Pro";
+export const appName = "PrepPal";
 
 export const companiesData = {
   amazon: {
