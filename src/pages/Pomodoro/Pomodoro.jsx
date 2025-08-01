@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { updateCalendarActivity } from "../../utils/helper";
+import React, { useEffect } from "react";
+// import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
 import { RotateCcw } from "lucide-react";
-import confetti from "canvas-confetti";
+// import confetti from "canvas-confetti";
+import { usePomodoroStore } from "../../store/usePomodorostore";
 
 /**
  * Features I want to show:
@@ -15,10 +16,6 @@ import confetti from "canvas-confetti";
  */
 
 const Pomodoro = () => {
-  const [isStart, setIsStart] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
-  const [activeTab, setActiveTab] = useState("focus");
-  // const [task, setTask] = useState("");
   const timerRef = React.useRef(null);
 
   const {
@@ -28,65 +25,33 @@ const Pomodoro = () => {
     setActivityCalendarData,
   } = useActivityStore((state) => state);
 
+  const {
+    isStart,
+    timeLeft,
+    activeTab,
+    setIsStart,
+    setActiveTab,
+    updateTimeLeft,
+    handleReset,
+  } = usePomodoroStore();
+
   const handleStartOrPause = () => {
-    setIsStart((prev) => !prev);
+    setIsStart(!isStart);
   };
-
-  const handleReset = () => {
-    setIsStart(false);
-    setTimeLeft(25 * 60);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-  };
-
-  const updateTimeLeft = () => {
-    setTimeLeft((prev) => {
-      if (prev <= 0) {
-        clearInterval(timerRef.current);
-
-        // update calendar activity when you complete a pomodoro
-        if (activeTab === "focus") {
-          confetti({ particleCount: 150, spread: 60 });
-          updateCalendarActivity(
-            calendarData,
-            activityCalendarData,
-            setCalendarData,
-            setActivityCalendarData
-          );
-        }
-        setIsStart(false);
-        return 25 * 60;
-      }
-
-      return prev - 1;
-    });
-  };
-
-  useEffect(() => {
-    if (activeTab === "focus") {
-      setTimeLeft(25 * 60); // 25 minutes for focus
-      clearInterval(timerRef.current);
-      setIsStart(false);
-    } else if (activeTab === "break") {
-      setTimeLeft(5 * 60); // 5 minutes for short break
-      clearInterval(timerRef.current);
-      setIsStart(false);
-    } else if (activeTab === "long-break") {
-      setTimeLeft(15 * 60); // 15 minutes for long break
-      clearInterval(timerRef.current);
-      setIsStart(false);
-    }
-  }, [activeTab]);
 
   useEffect(() => {
     if (isStart) {
-      timerRef.current = setInterval(updateTimeLeft, 1000);
+      timerRef.current = setInterval(() => {
+        updateTimeLeft(
+          calendarData,
+          activityCalendarData,
+          setCalendarData,
+          setActivityCalendarData
+        );
+      }, 1000);
     } else {
       clearInterval(timerRef.current); // Clear interval when paused
     }
-
-    return () => clearInterval(timerRef.current); // Cleanup on unmount
   }, [isStart]);
 
   const minutes = Math.floor(timeLeft / 60);
