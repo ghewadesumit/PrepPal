@@ -41,12 +41,12 @@
   "main": "eslint.config.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ghewadesumit/WebDevSumoz.git"
+    "url": "git+https://github.com/ghewadesumit/PrepPal.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ghewadesumit/WebDevSumoz/issues"
+    "url": "https://github.com/ghewadesumit/PrepPal/issues"
   }
 }
