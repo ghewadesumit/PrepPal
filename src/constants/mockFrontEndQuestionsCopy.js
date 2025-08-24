@@ -7,6 +7,10 @@ export const sections = {
     id: "javascript",
     name: "JavaScript Functions",
   },
+  asyncOperations: {
+    id: "asyncOperations",
+    name: "Async / Await, Promises",
+  },
   jsArticles: {
     id: "jsArticles",
     name: "JavaScript Articles",
