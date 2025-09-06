@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import Select from "react-select";
 import { useQuestionStore } from "../../store/useQuestionStore";
 import { useActivityStore } from "../../store/useActivityStore";
 import {
@@ -12,7 +13,7 @@ import {
 } from "lucide-react";
 
 import { cloneDeep } from "lodash";
-import { updateCalendarActivity } from "../../utils/helper";
+
 import {
   companiesKey,
   dsaQuestionsKey,
@@ -20,6 +21,7 @@ import {
   frontEndQuestionsKey,
   frontEndSectionKey,
 } from "../../constants/mock";
+import { updateCalendarActivity } from "../../utils/helper";
 
 const AddQuestion = ({
   selectedNavItem,
@@ -40,6 +42,7 @@ const AddQuestion = ({
     questionDifficulty: "easy",
     questionRating: "3",
     questionCompanies: "",
+    relatedQuestions: [],
   });
 
   const {
@@ -61,6 +64,20 @@ const AddQuestion = ({
     setAllFrontEndQuestionsSet,
   } = useQuestionStore((state) => state);
 
+  // Get all questions from the store (DSA or Frontend)
+  const allQuestionsSet =
+    selectedNavItem === "backend"
+      ? allDsaQuestionsSet
+      : allFrontEndQuestionsSet;
+
+  const allQuestionsList = useMemo(() => {
+    if (!allQuestionsSet) return [];
+    return Object.values(allQuestionsSet).map((q) => ({
+      value: q.id,
+      label: q.name,
+    }));
+  }, [allQuestionsSet]);
+
   const {
     calendarData,
     setCalendarData,
@@ -75,6 +92,14 @@ const AddQuestion = ({
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  // Handler for react-select
+  const handleRelatedQuestionsChange = (selectedOptions) => {
+    setFormData((prev) => ({
+      ...prev,
+      relatedQuestions: selectedOptions || [],
     }));
   };
 
@@ -194,6 +219,14 @@ const AddQuestion = ({
       revision: newQuestion.questionRevision,
       companies: newCompanies,
       sections: [sectionKey],
+
+      /**
+       * store the id of question so that you can lookup into its object to get details
+       * here value is id of the question
+       */
+      relatedQuestions: (newQuestion.relatedQuestions || []).map(
+        (q) => q.value
+      ),
     };
 
     const newQuestionSet = {
@@ -236,6 +269,7 @@ const AddQuestion = ({
       questionDifficulty: "easy",
       questionRating: "3",
       questionCompanies: "",
+      relatedQuestions: [],
     });
 
     setIsOpen(false);
@@ -410,6 +444,58 @@ const AddQuestion = ({
                 required
                 placeholder="https://leetcode.com/problems/..."
                 className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800"
+              />
+            </div>
+
+            {/* Related Questions Multi-Select */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-300">
+                Related Questions
+              </label>
+              <Select
+                isMulti
+                closeMenuOnSelect={false}
+                name="relatedQuestions"
+                options={allQuestionsList}
+                value={formData.relatedQuestions}
+                onChange={handleRelatedQuestionsChange}
+                classNamePrefix="react-select"
+                placeholder="Search and select related questions..."
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    backgroundColor: "#1f2937",
+                    borderColor: "#374151",
+                    color: "white",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    backgroundColor: "#1f2937",
+                    color: "white",
+                  }),
+                  option: (base, state) => ({
+                    ...base,
+                    backgroundColor: state.isSelected
+                      ? "#2563eb"
+                      : state.isFocused
+                      ? "#2563eb" // blue on hover
+                      : "#1f2937",
+                    color: "#fff",
+                    cursor: "pointer",
+                  }),
+                  multiValue: (base) => ({
+                    ...base,
+                    backgroundColor: "#2563eb",
+                  }),
+                  input: (base) => ({
+                    ...base,
+                    color: "white",
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    color: "white",
+                  }),
+                }}
               />
             </div>
 
