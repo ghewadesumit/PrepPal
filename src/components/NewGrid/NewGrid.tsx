@@ -5,6 +5,8 @@ import * as QuestionMockData from "../../constants/mock";
 import { useQuestionStore } from "../../store/useQuestionStore";
 import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
+import { all } from "axios";
+import RelatedQuestionsModal from "../RelatedQuestionsModal/RelatedQuestionsModal";
 const NewGrid = ({
   rowData,
   companies,
@@ -17,6 +19,10 @@ const NewGrid = ({
   const [difficultyFilter, setDifficultyFilter] = useState("All");
   const [statusFilter, setStatusFilter] = useState("All");
   const [companyFilter, setCompanyFilter] = useState("All");
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalRelatedQuestions, setModalRelatedQuestions] = useState([]);
 
   // Local storage keys (you might want to import these from constants)
   const dsaQuestionsKey = QuestionMockData.dsaQuestionsKey;
@@ -276,13 +282,19 @@ const NewGrid = ({
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-4">
+          <div className="col-span-2">
             <button
               onClick={() => handleSort("companies")}
               className="flex items-center hover:text-white transition-colors"
             >
               Companies
               <ArrowUpDown className="ml-1 w-3 h-3" />
+            </button>
+          </div>
+
+          <div className="col-span-3">
+            <button className="flex items-center hover:text-white transition-colors">
+              Related Questions
             </button>
           </div>
         </div>
@@ -353,7 +365,6 @@ const NewGrid = ({
                   {question.difficulty}
                 </span>
               </div>
-
               <div className="col-span-1 flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -368,8 +379,7 @@ const NewGrid = ({
                   />
                 ))}
               </div>
-
-              <div className="col-span-4 flex flex-wrap gap-1 items-center">
+              <div className="col-span-2 flex flex-wrap gap-1 items-center">
                 {question.companies && question.companies.length > 0 ? (
                   question.companies.map((company) => (
                     <span
@@ -383,10 +393,38 @@ const NewGrid = ({
                   <span className="text-gray-400">-</span>
                 )}
               </div>
+              <div className="col-span-2 font-medium">
+                {question?.relatedQuestions &&
+                question?.relatedQuestions.length > 0 ? (
+                  <button
+                    className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                    onClick={() => {
+                      setModalRelatedQuestions(question.relatedQuestions);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Show Related Questions
+                  </button>
+                ) : (
+                  <span className="text-gray-400">-</span>
+                )}
+              </div>
             </div>
           ))
         )}
       </div>
+
+      {/* Related Questions Modal */}
+      <RelatedQuestionsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        questions={modalRelatedQuestions}
+        allQuestionsSet={
+          selectedNavItem === "backend"
+            ? allDsaQuestionsSet
+            : allFrontEndQuestionsSet
+        }
+      />
     </div>
   );
 };
