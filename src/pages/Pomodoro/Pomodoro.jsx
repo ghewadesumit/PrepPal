@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
-// import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
 import { RotateCcw } from "lucide-react";
-// import confetti from "canvas-confetti";
 import { usePomodoroStore } from "../../store/usePomodorostore";
 
 /**
@@ -11,7 +9,7 @@ import { usePomodoroStore } from "../../store/usePomodorostore";
  * number of focus hours worked
  * number of tasks completed
  * number of breaks taken
- * rain music or lofi music during pomodoro
+ * rain music or lofi music during pomodoro ✅
  * pomodoro timer with start, pause, reset functionality
  */
 
