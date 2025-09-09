@@ -42,6 +42,7 @@ const AddQuestion = ({
     questionDifficulty: "easy",
     questionRating: "3",
     questionCompanies: "",
+    questionNotes: "",
     relatedQuestions: [],
   });
 
@@ -218,7 +219,12 @@ const AddQuestion = ({
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
       companies: newCompanies,
+
       sections: [sectionKey],
+      /**
+       * Store notes about the question
+       */
+      notes: newQuestion.questionNotes,
 
       /**
        * store the id of question so that you can lookup into its object to get details
@@ -269,6 +275,7 @@ const AddQuestion = ({
       questionDifficulty: "easy",
       questionRating: "3",
       questionCompanies: "",
+      questionNotes: "",
       relatedQuestions: [],
     });
 
@@ -292,7 +299,7 @@ const AddQuestion = ({
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
       <div className="bg-gray-900 rounded-3xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-800">
         {/* Modal Header */}
-        <div className="sticky top-0 bg-gray-900 rounded-t-3xl border-b border-gray-800 p-6">
+        <div className="sticky top-0 bg-gray-900 rounded-t-3xl border-b border-gray-800 p-6 z-10">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="inline-flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full">
@@ -496,6 +503,27 @@ const AddQuestion = ({
                     color: "white",
                   }),
                 }}
+              />
+            </div>
+
+            {/*Notes about question */}
+            <div className="space-y-2">
+              <label
+                htmlFor="questionNotes"
+                className="block text-sm font-semibold text-gray-300 flex items-center space-x-2"
+              >
+                <Link className="w-4 h-4" />
+                <span>Notes</span>
+              </label>
+              <textarea
+                type="url"
+                id="questionNotes"
+                name="questionNotes"
+                value={formData.questionNotes}
+                onChange={handleInputChange}
+                required
+                placeholder="Write your notes here"
+                className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800 h-24 resize-none"
               />
             </div>
 

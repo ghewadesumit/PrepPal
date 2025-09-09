@@ -5,19 +5,24 @@ import * as QuestionMockData from "../../constants/mock";
 import { useQuestionStore } from "../../store/useQuestionStore";
 import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
-import { all } from "axios";
 import RelatedQuestionsModal from "../RelatedQuestionsModal/RelatedQuestionsModal";
+
+/**
+ * Add Notes ✅
+ * Editable questions
+ * @param param0
+ * @returns
+ */
+
 const NewGrid = ({
   rowData,
   companies,
-  setSectionData,
-  sectionData,
   selectedNavItem,
 }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [filter, setFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter] = useState("All");
   const [companyFilter, setCompanyFilter] = useState("All");
 
   // Modal state
@@ -292,9 +297,15 @@ const NewGrid = ({
             </button>
           </div>
 
-          <div className="col-span-3">
+          <div className="col-span-2">
             <button className="flex items-center hover:text-white transition-colors">
               Related Questions
+            </button>
+          </div>
+
+          <div className="col-span-1">
+            <button className="flex items-center hover:text-white transition-colors">
+              Notes
             </button>
           </div>
         </div>
@@ -408,6 +419,18 @@ const NewGrid = ({
                 ) : (
                   <span className="text-gray-400">-</span>
                 )}
+              </div>
+
+              <div className="col-span-1 font-medium">
+                <button
+                  className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                  // onClick={() => {
+                  // setModalRelatedQuestions(question.relatedQuestions);
+                  // setIsModalOpen(true);
+                  // }}
+                >
+                  Notes
+                </button>
               </div>
             </div>
           ))
