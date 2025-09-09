@@ -6,6 +6,7 @@ import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
 import RelatedQuestionsModal from "../RelatedQuestionsModal/RelatedQuestionsModal";
 import { PenIcon } from "lucide-react";
+import NotesModal from "../NotesModal/NotesModal";
 import EditQuestionModal from "../EditQuestionModal/EditQuestionModal";
 
 /**
@@ -22,11 +23,13 @@ const NewGrid = ({ rowData, companies, selectedNavItem }) => {
   const [statusFilter] = useState("All");
   const [companyFilter, setCompanyFilter] = useState("All");
 
-  // Modal state
+  // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalRelatedQuestions, setModalRelatedQuestions] = useState([]);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
   const [editingQuestion, setEditingQuestion] = useState(null);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
   // Local storage keys (you might want to import these from constants)
   const dsaQuestionsKey = QuestionMockData.dsaQuestionsKey;
@@ -443,10 +446,10 @@ const NewGrid = ({ rowData, companies, selectedNavItem }) => {
               <div className="col-span-1 font-medium">
                 <button
                   className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
-                  // onClick={() => {
-                  // setModalRelatedQuestions(question.relatedQuestions);
-                  // setIsModalOpen(true);
-                  // }}
+                  onClick={() => {
+                    setSelectedQuestion(question);
+                    setIsNotesModalOpen(true);
+                  }}
                 >
                   Notes
                 </button>
@@ -466,6 +469,14 @@ const NewGrid = ({ rowData, companies, selectedNavItem }) => {
             ? allDsaQuestionsSet
             : allFrontEndQuestionsSet
         }
+      />
+
+      {/* Notes Modal */}
+      <NotesModal
+        isOpen={isNotesModalOpen}
+        onClose={() => setIsNotesModalOpen(false)}
+        question={selectedQuestion}
+        selectedNavItem={selectedNavItem}
       />
 
       {/* Update Question */}
