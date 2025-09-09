@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { ArrowUpDown, Search, Star, Check, X } from "lucide-react";
 import * as QuestionMockData from "../../constants/mock";
-
 import { useQuestionStore } from "../../store/useQuestionStore";
 import { updateCalendarActivity } from "../../utils/helper";
 import { useActivityStore } from "../../store/useActivityStore";
 import RelatedQuestionsModal from "../RelatedQuestionsModal/RelatedQuestionsModal";
+import { PenIcon } from "lucide-react";
+import EditQuestionModal from "../EditQuestionModal/EditQuestionModal";
 
 /**
  * Add Notes ✅
@@ -14,11 +15,7 @@ import RelatedQuestionsModal from "../RelatedQuestionsModal/RelatedQuestionsModa
  * @returns
  */
 
-const NewGrid = ({
-  rowData,
-  companies,
-  selectedNavItem,
-}) => {
+const NewGrid = ({ rowData, companies, selectedNavItem }) => {
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
   const [filter, setFilter] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState("All");
@@ -28,17 +25,18 @@ const NewGrid = ({
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalRelatedQuestions, setModalRelatedQuestions] = useState([]);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
 
   // Local storage keys (you might want to import these from constants)
   const dsaQuestionsKey = QuestionMockData.dsaQuestionsKey;
   const frontEndQuestionsKey = QuestionMockData.frontEndQuestionsKey;
 
   const {
+    setCompanies,
     completedDsaQuestions,
     revisionDsaQuestions,
 
-    completedFrontEndQuestions,
-    revisionFrontEndQuestions,
     setCompletedDsaQuestions,
     setRevisionDsaQuestions,
 
@@ -246,6 +244,15 @@ const NewGrid = ({
               onClick={() => handleSort("completed")}
               className="flex items-center hover:text-white transition-colors"
             >
+              Edit
+              <ArrowUpDown className="ml-1 w-3 h-3" />
+            </button>
+          </div>
+          <div className="col-span-1">
+            <button
+              onClick={() => handleSort("completed")}
+              className="flex items-center hover:text-white transition-colors"
+            >
               Completed
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
@@ -259,7 +266,7 @@ const NewGrid = ({
               <ArrowUpDown className="ml-1 w-3 h-3" />
             </button>
           </div>
-          <div className="col-span-3">
+          <div className="col-span-2">
             <button
               onClick={() => handleSort("title")}
               className="flex items-center hover:text-white transition-colors"
@@ -325,6 +332,18 @@ const NewGrid = ({
                 question
               )} ${index % 2 === 0 ? "" : "bg-opacity-50"}`}
             >
+              <div className="col-span-1 font-medium">
+                <button
+                  className="text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                  onClick={() => {
+                    setEditingQuestion(question); // <-- Add this state
+                    setIsEditModalOpen(true);
+                  }}
+                >
+                  <PenIcon />
+                </button>
+              </div>
+
               <div className="col-span-1 flex items-center justify-center">
                 <button
                   onClick={() => toggleStatus(question.id, "completed")}
@@ -353,7 +372,7 @@ const NewGrid = ({
                   )}
                 </button>
               </div>
-              <div className="col-span-3 font-medium">
+              <div className="col-span-2 font-medium">
                 <a
                   href={question.link}
                   target="_blank"
@@ -448,6 +467,18 @@ const NewGrid = ({
             : allFrontEndQuestionsSet
         }
       />
+
+      {/* Update Question */}
+      {isEditModalOpen && (
+        <EditQuestionModal
+          selectedNavItem={selectedNavItem}
+          setIsOpen={setIsEditModalOpen}
+          companies={companies}
+          setCompanies={setCompanies}
+          editMode={isEditModalOpen}
+          initialData={editingQuestion}
+        />
+      )}
     </div>
   );
 };
