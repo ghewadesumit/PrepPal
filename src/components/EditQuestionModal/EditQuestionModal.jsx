@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Select from "react-select";
 import { useQuestionStore } from "../../store/useQuestionStore";
-import { useActivityStore } from "../../store/useActivityStore";
 import {
   Plus,
   Link,
@@ -11,54 +10,36 @@ import {
   RotateCcw,
   X,
 } from "lucide-react";
-
 import { cloneDeep } from "lodash";
-
 import {
   companiesKey,
   dsaQuestionsKey,
-  dsaSectionKey,
   frontEndQuestionsKey,
-  frontEndSectionKey,
 } from "../../constants/mock";
-import { updateCalendarActivity } from "../../utils/helper";
 
-const AddQuestion = ({
+const EditQuestionModal = ({
   selectedNavItem,
-  setSectionData,
-  sectionData,
-  questionSectionsData,
   setIsOpen,
   companies,
   setCompanies,
+  editMode,
+  initialData,
 }) => {
+  const questionData = useRef(initialData);
   const [formData, setFormData] = useState({
-    questionStatus: false,
-    questionRevision: false,
-    questionName: "",
-    questionLink: "",
-    questionSection:
-      questionSectionsData[Reflect.ownKeys(questionSectionsData)[0]].id || "", // Default to first section
-    questionDifficulty: "easy",
-    questionRating: "3",
-    questionCompanies: "",
-    questionNotes: "",
-    relatedQuestions: [],
+    questionStatus: initialData.completed || false,
+    questionRevision: initialData.revision || false,
+    questionName: initialData.name,
+    questionLink: initialData.link || "",
+    questionSection: initialData.sections?.[0],
+    questionDifficulty: initialData.difficulty || "easy",
+    questionRating: initialData.rating ? initialData.rating.toString() : "3",
+    questionCompanies: initialData.companies,
+    questionNotes: initialData.notes,
+    relatedQuestions: initialData.relatedQuestions,
   });
 
   const {
-    totalDsaQuestions,
-    completedDsaQuestions,
-    revisionDsaQuestions,
-    totalFrontEndQuestions,
-    completedFrontEndQuestions,
-    revisionFrontEndQuestions,
-    setCompletedDsaQuestions,
-    setRevisionDsaQuestions,
-    setTotalDsaQuestions,
-    setCompletedFrontEndQuestions,
-    setRevisionFrontEndQuestions,
-    setTotalFrontEndQuestions,
     allDsaQuestionsSet,
     allFrontEndQuestionsSet,
     setAllDsaQuestionsSet,
@@ -79,13 +60,6 @@ const AddQuestion = ({
     }));
   }, [allQuestionsSet]);
 
-  const {
-    calendarData,
-    setCalendarData,
-    activityCalendarData,
-    setActivityCalendarData,
-  } = useActivityStore((state) => state);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
@@ -102,41 +76,6 @@ const AddQuestion = ({
       ...prev,
       relatedQuestions: selectedOptions || [],
     }));
-  };
-
-  const updateQuestionCount = (count, status, revision) => {
-    if (selectedNavItem === "backend") {
-      setTotalDsaQuestions(totalDsaQuestions + count);
-      if (status) {
-        setCompletedDsaQuestions(completedDsaQuestions + count);
-      }
-      if (revision) {
-        setRevisionDsaQuestions(revisionDsaQuestions + count);
-      }
-    } else {
-      setTotalFrontEndQuestions(totalFrontEndQuestions + count);
-      if (status) {
-        setCompletedFrontEndQuestions(completedFrontEndQuestions + count);
-      }
-      if (revision) {
-        setRevisionFrontEndQuestions(revisionFrontEndQuestions + count);
-      }
-    }
-  };
-
-  // function to get id of the question based on the name
-  const formatToCamelCase = (str) => {
-    return str
-      .replace(/[^a-zA-Z0-9 ]/g, "") // Remove special characters
-      .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-      .trim() // Trim leading and trailing spaces
-      .split(" ")
-      .map((word, index) =>
-        index === 0
-          ? word.toLowerCase()
-          : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-      )
-      .join("");
   };
 
   const getCompanies = (companyList) => {
@@ -166,37 +105,14 @@ const AddQuestion = ({
   const storeNewQuestion = (newQuestion) => {
     // console.log("Debug");
 
-    const [
-      currentQuestionSet,
-      currentSetQuestionSet,
-      currentQuestionKey,
-      currentSectionKey,
-    ] =
+    const [currentQuestionSet, currentSetQuestionSet, currentQuestionKey] =
       selectedNavItem === "backend"
-        ? [
-            allDsaQuestionsSet,
-            setAllDsaQuestionsSet,
-            dsaQuestionsKey,
-            dsaSectionKey,
-          ]
+        ? [allDsaQuestionsSet, setAllDsaQuestionsSet, dsaQuestionsKey]
         : [
             allFrontEndQuestionsSet,
             setAllFrontEndQuestionsSet,
             frontEndQuestionsKey,
-            frontEndSectionKey,
           ];
-    const updatedSectionData = { ...sectionData };
-    const sectionKey = newQuestion.questionSection;
-
-    if (!updatedSectionData[sectionKey]) {
-      updatedSectionData[sectionKey] = [];
-    }
-
-    updateQuestionCount(
-      1,
-      newQuestion.questionStatus,
-      newQuestion.questionRevision
-    );
 
     let newCompanies = [];
     if (newQuestion.questionCompanies.trim().length > 0) {
@@ -206,21 +122,16 @@ const AddQuestion = ({
       }
     }
 
-    const questionId = formatToCamelCase(newQuestion.questionName);
-    updatedSectionData[sectionKey].push(questionId);
+    const questionId = questionData.current.id;
 
     const newQuestionObject = {
-      createdAt: Date.now().toString(), // Simple unique ID
-      id: questionId, // Simple unique ID
-      name: newQuestion.questionName,
+      ...questionData.current,
       link: newQuestion.questionLink,
       difficulty: newQuestion.questionDifficulty,
       rating: parseInt(newQuestion.questionRating, 10),
       completed: newQuestion.questionStatus,
       revision: newQuestion.questionRevision,
       companies: newCompanies,
-
-      sections: [sectionKey],
       /**
        * Store notes about the question
        */
@@ -241,17 +152,8 @@ const AddQuestion = ({
 
     newQuestionSet[questionId] = newQuestionObject;
     currentSetQuestionSet(newQuestionSet);
-    updateCalendarActivity(
-      calendarData,
-      activityCalendarData,
-      setCalendarData,
-      setActivityCalendarData
-    );
 
     localStorage.setItem(currentQuestionKey, JSON.stringify(newQuestionSet));
-
-    setSectionData(cloneDeep(updatedSectionData));
-    localStorage.setItem(currentSectionKey, JSON.stringify(updatedSectionData));
   };
 
   const handleSubmit = async (e) => {
@@ -307,10 +209,12 @@ const AddQuestion = ({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-white">
-                  Add New Question
+                  {editMode ? "Update Question" : "Add New Question"}
                 </h2>
                 <p className="text-sm text-gray-400">
-                  Create a new coding challenge entry
+                  {editMode
+                    ? "Update existing challenge entry"
+                    : "Create a new coding challenge entry"}
                 </p>
               </div>
             </div>
@@ -336,6 +240,7 @@ const AddQuestion = ({
                   checked={formData.questionStatus}
                   onChange={handleInputChange}
                   className="sr-only"
+                  value={formData.questionStatus}
                 />
                 <label
                   htmlFor="questionStatus"
@@ -364,6 +269,7 @@ const AddQuestion = ({
                   checked={formData.questionRevision}
                   onChange={handleInputChange}
                   className="sr-only"
+                  value={formData.questionRevision}
                 />
                 <label
                   htmlFor="questionRevision"
@@ -383,54 +289,6 @@ const AddQuestion = ({
                   <span className="font-medium text-sm">Needs Revision</span>
                 </label>
               </div>
-            </div>
-
-            {/* Difficulty */}
-            <div className="space-y-2">
-              <label
-                htmlFor="questionSection"
-                className="block text-sm font-semibold text-gray-300"
-              >
-                Question Section
-                <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="questionSection"
-                name="questionSection"
-                value={formData.questionSection}
-                onChange={handleInputChange}
-                required
-                className={`w-full px-4 py-3 border text-white border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200  bg-gray-800`}
-              >
-                {Reflect.ownKeys(questionSectionsData)?.map((key) => (
-                  <option
-                    key={questionSectionsData[key].id}
-                    value={questionSectionsData[key].id}
-                  >
-                    {questionSectionsData[key].name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Question Name */}
-            <div className="space-y-2">
-              <label
-                htmlFor="questionName"
-                className="block text-sm font-semibold text-gray-300"
-              >
-                Question Name
-              </label>
-              <input
-                type="text"
-                id="questionName"
-                name="questionName"
-                value={formData.questionName}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter the question title..."
-                className="w-full px-4 py-3 border border-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-white placeholder-gray-500 bg-gray-800"
-              />
             </div>
 
             {/* Question Link */}
@@ -623,12 +481,12 @@ const AddQuestion = ({
               {isSubmitting ? (
                 <div className="flex items-center justify-center space-x-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Adding...</span>
+                  <span>{editMode ? "Updating..." : "Adding..."}</span>
                 </div>
               ) : (
                 <div className="flex items-center justify-center space-x-2">
                   <Plus className="w-4 h-4" />
-                  <span>Add Question</span>
+                  <span>{editMode ? "Update Question" : "Add Question"}</span>
                 </div>
               )}
             </button>
@@ -639,4 +497,4 @@ const AddQuestion = ({
   );
 };
 
-export default AddQuestion;
+export default EditQuestionModal;
