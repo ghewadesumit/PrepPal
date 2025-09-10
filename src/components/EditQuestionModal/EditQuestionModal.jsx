@@ -26,18 +26,6 @@ const EditQuestionModal = ({
   initialData,
 }) => {
   const questionData = useRef(initialData);
-  const [formData, setFormData] = useState({
-    questionStatus: initialData.completed || false,
-    questionRevision: initialData.revision || false,
-    questionName: initialData.name,
-    questionLink: initialData.link || "",
-    questionSection: initialData.sections?.[0],
-    questionDifficulty: initialData.difficulty || "easy",
-    questionRating: initialData.rating ? initialData.rating.toString() : "3",
-    questionCompanies: initialData.companies,
-    questionNotes: initialData.notes,
-    relatedQuestions: initialData.relatedQuestions,
-  });
 
   const {
     allDsaQuestionsSet,
@@ -51,6 +39,26 @@ const EditQuestionModal = ({
     selectedNavItem === "backend"
       ? allDsaQuestionsSet
       : allFrontEndQuestionsSet;
+
+  const [formData, setFormData] = useState({
+    questionStatus: initialData.completed || false,
+    questionRevision: initialData.revision || false,
+    questionName: initialData.name,
+    questionLink: initialData.link || "",
+    questionSection: initialData.sections?.[0],
+    questionDifficulty: initialData.difficulty || "easy",
+    questionRating: initialData.rating ? initialData.rating.toString() : "3",
+    questionCompanies: initialData.companies.join(","),
+    questionNotes: initialData.notes,
+    relatedQuestions: initialData.relatedQuestions
+      ? initialData.relatedQuestions
+          .map((id) => ({
+            value: id,
+            label: allQuestionsSet?.[id]?.name || "",
+          }))
+          .filter((option) => option.label) // Filter out any options with empty labels
+      : [],
+  });
 
   const allQuestionsList = useMemo(() => {
     if (!allQuestionsSet) return [];
@@ -159,29 +167,36 @@ const EditQuestionModal = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+    try {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      console.log("Form submitted:", formData);
+      setIsSubmitting(false);
 
-    console.log("Form submitted:", formData);
-    setIsSubmitting(false);
+      storeNewQuestion(formData);
 
-    storeNewQuestion(formData);
+      // Reset form
+      setFormData({
+        questionStatus: false,
+        questionRevision: false,
+        questionName: "",
+        questionLink: "",
+        questionDifficulty: "easy",
+        questionRating: "3",
+        questionCompanies: "",
+        questionNotes: "",
+        relatedQuestions: [],
+      });
 
-    // Reset form
-    setFormData({
-      questionStatus: false,
-      questionRevision: false,
-      questionName: "",
-      questionLink: "",
-      questionDifficulty: "easy",
-      questionRating: "3",
-      questionCompanies: "",
-      questionNotes: "",
-      relatedQuestions: [],
-    });
-
-    setIsOpen(false);
+      setIsOpen(false);
+      // Close the modal after successful submission
+      setIsOpen(false);
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getDifficultyColor = (difficulty) => {
