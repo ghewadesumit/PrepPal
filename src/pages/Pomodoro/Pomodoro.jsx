@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useActivityStore } from "../../store/useActivityStore";
 import { RotateCcw } from "lucide-react";
-import { usePomodoroStore } from "../../store/usePomodorostore";
+import { usePomodoroStore } from "../../store/usePomodoroStore";
+import { set } from "lodash";
 
 /**
  * Features I want to show:
@@ -31,6 +32,8 @@ const Pomodoro = () => {
     setActiveTab,
     updateTimeLeft,
     handleReset,
+    clearTimer,
+    setTimerRef,
   } = usePomodoroStore();
 
   const handleStartOrPause = () => {
@@ -47,8 +50,10 @@ const Pomodoro = () => {
           setActivityCalendarData
         );
       }, 1000);
+
+      setTimerRef(timerRef.current);
     } else {
-      clearInterval(timerRef.current); // Clear interval when paused
+      clearTimer(); // Clear interval when paused
     }
   }, [isStart]);
 
