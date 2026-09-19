@@ -4,6 +4,10 @@ import "./index.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { BrowserRouter } from "react-router";
 import AppRoutes from "./routes/AppRoutes";
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 

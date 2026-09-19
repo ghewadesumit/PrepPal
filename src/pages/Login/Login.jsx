@@ -7,6 +7,10 @@ const Login = () => {
 		console.log("Google sign-in succeeded", credentialResponse);
 	};
 
+	const handleLogin = () => {
+  window.location.href = "http://localhost:8080/oauth2/authorization/google";
+};
+
 	return (
 		<main className="relative min-h-screen overflow-hidden bg-gray-950 text-white">
 			<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(37,99,235,0.22),_transparent_38%),radial-gradient(circle_at_bottom_right,_rgba(124,58,237,0.18),_transparent_35%)]" />
@@ -58,7 +62,7 @@ const Login = () => {
 							</div>
 
 							<div className="rounded-2xl border border-gray-700 bg-gray-800/70 p-5 shadow-xl">
-								<GoogleLogin
+								{/* <GoogleLogin
 									onSuccess={handleGoogleSuccess}
 									onError={() => console.error("Google sign-in failed")}
 									theme="filled_black"
@@ -66,7 +70,11 @@ const Login = () => {
 									width="320"
 									text="continue_with"
 									shape="rectangular"
-								/>
+								/> */}
+
+								<button onClick={handleLogin}>
+									Continue with google
+								</button>
 								<div className="mt-5 flex items-start gap-3 border-t border-gray-700 pt-5 text-xs leading-5 text-gray-500">
 									<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-blue-400" />
 									<span>Sign in securely with your Google account. We never store your Google password.</span>
